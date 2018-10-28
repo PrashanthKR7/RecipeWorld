@@ -1,0 +1,52 @@
+.metadata
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Eclipse #
+.settings
+.project
+.classpath
+.studio
+target
+
+# Apple # 
+.DS_Store
+
+# Intellij #
+.idea
+*.iml
+*.log
+
+# logback
+logback.out.xml
+
+recipesAPI/src/main/resources/public/
+recipesAPI/target
+
+recipe-world/.DS_Store
+recipe-world/node_modules
+recipe-world/dist
+
+# local env files
+recipe-world/.env.local
+recipe-world/.env.*.local
+
+# Log files
+recipe-world/npm-debug.log*
+recipe-world/yarn-debug.log*
+recipe-world/yarn-error.log*
+
+# Editor directories and files
+recipe-world/.idea
+recipe-world/.vscode
+recipe-world/*.suo
+recipe-world/*.ntvs*
+recipe-world/*.njsproj
+recipe-world/*.sln
+recipe-world/*.sw*
+
+!.mvn/wrapper/maven-wrapper.jar
