@@ -35,19 +35,19 @@
 
 <script>
 export default {
-    name: 'RecipeCard',
-    props: {
-        recipe: {
-            type: Object,
-            required: true,
-        },
+  name: 'RecipeCard',
+  props: {
+    recipe: {
+      type: Object,
+      required: true,
     },
+  },
 }
 </script>
 
 <style scoped>
 .card {
-    max-width: 350px;
-    cursor: pointer;
+  max-width: 350px;
+  cursor: pointer;
 }
 </style>

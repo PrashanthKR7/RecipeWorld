@@ -30,14 +30,6 @@
         "src/router/index.scss",
         "src/router/index.css"
       ],
-      "@services/*": ["src/services/*"],
-      "@services": [
-        "src/services/index.js",
-        "src/services/index.json",
-        "src/services/index.vue",
-        "src/services/index.scss",
-        "src/services/index.css"
-      ],
       "@views/*": ["src/router/views/*"],
       "@views": [
         "src/router/views/index.js",
@@ -61,6 +53,14 @@
         "src/components/index.vue",
         "src/components/index.scss",
         "src/components/index.css"
+      ],
+      "@services/*": ["src/services/*"],
+      "@services": [
+        "src/services/index.js",
+        "src/services/index.json",
+        "src/services/index.vue",
+        "src/services/index.scss",
+        "src/services/index.css"
       ],
       "@assets/*": ["src/assets/*"],
       "@assets": [

@@ -6,18 +6,18 @@
 
 <script>
 export default {
-    name: 'Logo',
-    data() {
-        return {
-            logo: './assets/logo.png'
-        }
+  name: 'Logo',
+  data() {
+    return {
+      logo: './assets/logo.png',
     }
-};
+  },
+}
 </script>
 
 <style lang="scss" module>
 @import '@design';
 .is-horizontal-center {
-    justify-content: center;
+  justify-content: center;
 }
 </style>

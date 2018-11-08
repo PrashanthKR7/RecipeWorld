@@ -1,7 +1,7 @@
-import praseDate from 'data-fns/parse'
 import format from 'data-fns/format'
+import parseDate from 'date-fnd/parse'
 
 export default function formatDate(date) {
-    date = parseDate(date)
-    return format(date, 'DD-MMM-YYYY')
+  date = parseDate(date)
+  return format(date, 'DD-MMM-YYYY')
 }

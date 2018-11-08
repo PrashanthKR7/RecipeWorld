@@ -18,38 +18,38 @@
 
 <script>
 export default {
-    name: 'Search',
-    data() {
-        return {
-            searchTerm: '',
-            filters: [],
-            categories: [{
-                    id: 0,
-                    name: 'All'
-                },
-                {
-                    id: 1,
-                    name: 'Indian'
-                }
-            ]
-        }
-    },
-    methods: {
-        search() {
-            console.log(this.searchTerm);
-        }
+  name: 'Search',
+  data() {
+    return {
+      searchTerm: '',
+      filters: [],
+      categories: [
+        {
+          id: 0,
+          name: 'All',
+        },
+        {
+          id: 1,
+          name: 'Indian',
+        },
+      ],
     }
-
+  },
+  methods: {
+    search() {
+      console.log(this.searchTerm)
+    },
+  },
 }
 </script>
 
 <style>
 input.input {
-    min-width: 100px;
+  min-width: 100px;
 }
 
 .select select {
-    border-radius: 4px 0px 0px 4px;
-    z-index: 1;
+  border-radius: 4px 0px 0px 4px;
+  z-index: 1;
 }
 </style>

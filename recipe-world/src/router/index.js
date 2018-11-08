@@ -1,16 +1,16 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 
-import VueMeta from 'vue-meta';
+import VueMeta from 'vue-meta'
 // adds a loading at the top during page loads
-import NProgress from 'nprogress/nprogress';
-import store from '@state/store';
-import routes from './routes';
-Vue.use(VueRouter);
+import NProgress from 'nprogress/nprogress'
+import store from '@state/store'
+import routes from './routes'
+Vue.use(VueRouter)
 Vue.use(VueMeta, {
   // The component option name that vue-meta looks for meta info on
-  keyName: 'page'
-});
+  keyName: 'page',
+})
 
 const router = new VueRouter({
   routes,
@@ -25,45 +25,45 @@ const router = new VueRouter({
   // route and using back/forward buttons.
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition;
+      return savedPosition
     } else {
-      return { x: 0, y: 0 };
+      return { x: 0, y: 0 }
     }
-  }
-});
+  },
+})
 
 // Before each route evaluates...
 router.beforeEach((routeTo, routeFrom, next) => {
   // if this isnt an initial page load
   if (routeFrom.name !== null) {
     // start the route progress bar
-    NProgress.start();
+    NProgress.start()
   }
 
   // check if auth is required on this route
   const authRequired = routeTo.matched.some(route => route.meta.authRequired)
 
   // if auth isnt required for the route, just continue
-  if(!authRequired) return next()
+  if (!authRequired) return next()
   // if auth isnt required and the user is logged in..
   if (store.getters['auth/loggedIn']) {
     // validate the local user token
     return store.dispatch('auth/validate').then(validUser => {
       // Then continue if the token still represents a valid user,
       // otherwise redirect to login.
-      validUser ? next() : redirectToLogin();
-    });
+      validUser ? next() : redirectToLogin()
+    })
   }
 
   // If auth is required and the user is NOT currently logged in,
   // redirect to login.
-  redirectToLogin();
+  redirectToLogin()
 
   function redirectToLogin() {
     // Pass the original route to the login component
-    next({ name: 'login', query: { redirectFrom: routeTo.fullPath } });
+    next({ name: 'login', query: { redirectFrom: routeTo.fullPath } })
   }
-});
+})
 
 // Create a `beforeResolve` hook, which fires whenever
 // `beforeRouteEnter` and `beforeRouteUpdate` would. This
@@ -80,30 +80,30 @@ router.beforeResolve(async (routeTo, routeFrom, next) => {
         if (route.meta && route.meta.beforeResolve) {
           route.meta.beforeResolve(routeTo, routeFrom, (...args) => {
             if (args.length) {
-              next(...args);
-              reject(new Error('Redirected'));
+              next(...args)
+              reject(new Error('Redirected'))
             } else {
-              resolve();
+              resolve()
             }
-          });
+          })
         } else {
           // Otherwise, continue resolving the route.
-          resolve();
+          resolve()
         }
-      });
+      })
     }
   } catch (e) {
     // If a `beforeResolve` hook chose to redirect, just return.
-    return;
+    return
   }
 
   next()
-});
+})
 
 // When each route is finished evaluating...
 router.afterEach(() => {
   // Complete the animation of the route progress bar.
-  NProgress.done();
-});
+  NProgress.done()
+})
 
-export default router;
+export default router

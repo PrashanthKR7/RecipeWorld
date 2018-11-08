@@ -8,24 +8,24 @@
 
 <script>
 export default {
-    data() {
-        return {
-            order: 'is-centered',
-            size: '',
-            current:1,
-            isSimple: false,
-            isRounded: false,
-        }
+  data() {
+    return {
+      order: 'is-centered',
+      size: '',
+      current: 1,
+      isSimple: false,
+      isRounded: false,
+    }
+  },
+  props: {
+    total: Number,
+    perPage: Number,
+  },
+  methods: {
+    pageChange(value) {
+      this.$emit('page-changed', value)
+      this.$emit('update:current', value)
     },
-    props: {
-        total: Number,
-        perPage: Number,
-    },
-    methods: {
-        pageChange(value) {
-            this.$emit('page-changed', value)
-            this.$emit('update:current',value)
-        },
-    },
+  },
 }
 </script>

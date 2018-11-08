@@ -1,13 +1,12 @@
-
 module.exports = {
+  baseUrl: '.',
+  include: ['src/**/*', 'tests/**/*'],
+  compilerOptions: {
     baseUrl: '.',
-    include: ['src/**/*', 'tests/**/*'],
-    compilerOptions: {
-      baseUrl: '.',
-      target: 'es6',
-      module: 'es6',
-      // ...
-      // `paths` will be automatically generated using aliases.config.js
-      // ...
-    },
-  }
+    target: 'es6',
+    module: 'es6',
+    // ...
+    // `paths` will be automatically generated using aliases.config.js
+    // ...
+  },
+}

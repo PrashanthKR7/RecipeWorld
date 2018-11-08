@@ -7,17 +7,17 @@
 
 <script>
 export default {
-    name: 'Message',
-    props: ['data'],
-    data() {
-        return {
-            message: '',
-            header: ''
-        }
-    },
-    created() {
-        this.message = this.data.msg
-        this.header = this.data.header
+  name: 'Message',
+  props: ['data'],
+  data() {
+    return {
+      message: '',
+      header: '',
     }
+  },
+  created() {
+    this.message = this.data.msg
+    this.header = this.data.header
+  },
 }
 </script>

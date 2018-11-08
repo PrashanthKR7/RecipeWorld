@@ -10,38 +10,38 @@
 </template>
 
 <script>
-import Layout from '@layouts/main';
+import Layout from '@layouts/main'
 export default {
   page: {
     title: 'Loading page...',
     meta: [
       {
         name: 'description',
-        content: 'Loading page...'
-      }
-    ]
+        content: 'Loading page...',
+      },
+    ],
   },
   components: {
-    Layout
-  }
-};
+    Layout,
+  },
+}
 </script>
 
 <style lang="scss" module>
 @import '@design';
 
 .loadingIcon {
-    @extend %typography-xxlarge;
+  @extend %typography-xxlarge;
 
-    display: block;
-    margin: 0 auto;
+  display: block;
+  margin: 0 auto;
 
-    &:global(.v-enter-active) {
-        transition: opacity 1s;
-    }
+  &:global(.v-enter-active) {
+    transition: opacity 1s;
+  }
 
-    &:global(.v-enter) {
-        opacity: 0;
-    }
+  &:global(.v-enter) {
+    opacity: 0;
+  }
 }
 </style>

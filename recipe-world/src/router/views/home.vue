@@ -9,12 +9,14 @@
                             <h1 class="title is-spaced">Recipe World for everyone</h1>
                             <h2 class="subtitle is-3">A recipe has no soul. you as the cook must bring soul to the recipe.</h2>
                             <div class="field is-grouped">
-                                <div class="control"> <a class="button is-primary is-medium" href="#platform">How does it work?</a> </div>
                                 <div class="control">
-                                    <router-link class="button is-primary is-medium is-outlined" to="/create">Create recipe</router-link>
+                                    <router-link to="/create" class="button is-primary is-medium">Create recipe</router-link>
+                                </div>
+                                <div class="control" v-if="isAuthenticated">
+                                    <router-link to="/recipes/my" class="button is-primary is-medium is-outlined" href="#platform">My Library</router-link>
                                 </div>
                                 <div class="control">
-                                    <router-link to="/library" class="button is-primary is-medium is-outlined">Explore Library</router-link>
+                                    <router-link to="/recipes" class="button is-primary is-medium is-outlined">Explore Library</router-link>
                                 </div>
                             </div>
                         </div>
@@ -61,41 +63,52 @@
 </template>
 
 <script>
+import { authComputed } from '@state/helpers'
 import appConfig from '@src/app.config'
 import Layout from '@layouts/main'
 export default {
-    page: {
-        title: 'Home',
-        meta: [{
-            name: 'description',
-            content: appConfig.description,
-        }, ],
+  page: {
+    title: 'Home',
+    meta: [
+      {
+        name: 'description',
+        content: appConfig.description,
+      },
+    ],
+  },
+  methods: {
+    auth: function() {
+      console.log(this.isAuthenticated)
     },
-    components: {
-        Layout,
-    },
+  },
+  components: {
+    Layout,
+  },
+  computed: {
+    ...authComputed,
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .has-background {
-    background-color: #FBFBFD;
+  background-color: #fbfbfd;
 }
 
 .card.is-usp {
-    max-width: 320px;
-    margin: 0 auto
+  max-width: 320px;
+  margin: 0 auto;
 }
 
 .card.is-usp .subtitle {
-    line-height: 1.66667
+  line-height: 1.66667;
 }
 
 .card {
-    background-color: transparent;
-    box-shadow: none;
-    color: #998DA0;
-    max-width: 100%;
-    position: relative;
+  background-color: transparent;
+  box-shadow: none;
+  color: #998da0;
+  max-width: 100%;
+  position: relative;
 }
 </style>

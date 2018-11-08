@@ -158,7 +158,7 @@
                                         <div class="columns">
                                             <div class="column">{{step.content}}</div>
                                             <div class="column is-narrow" v-if="step.image">
-                                                <img class="step-image" :src="step.imageHTML" :title="step.image.name"/>
+                                                <img class="step-image" :src="step.imageHTML" :title="step.image.name" />
                                             </div>
                                             <div class="column is-narrow">
                                                 <p class="control">
@@ -190,169 +190,174 @@
 
 <script>
 import draggable from 'vuedraggable'
-import {
-    authMethods
-} from '@state/helpers'
+import { authComputed } from '@state/helpers'
 import Layout from '@layouts/main'
-import {
-    Validator
-} from 'vee-validate'
+import { Validator } from 'vee-validate'
 
 Validator.extend('ingredient', {
-    getMessage: field => 'The ' + field + ' value is not truthy.',
-    validate: value => !!value,
+  getMessage: field => 'The ' + field + ' value is not truthy.',
+  validate: value => !!value,
 })
 
 export default {
-    page: {
-        title: 'create',
-        meta: [{
-            name: 'description',
-            content: `Cook up a new recipe`,
-        }, ],
+  page: {
+    title: 'create',
+    meta: [
+      {
+        name: 'description',
+        content: `Cook up a new recipe`,
+      },
+    ],
+  },
+  data() {
+    return {
+      hasError: false,
+      dropFile: null,
+      isIngOpen: false,
+      isStpOpen: false,
+      coverImageHTML: '',
+      recipe: {
+        title: null,
+        description: null,
+        ingredients: [],
+        cuisine: null,
+        mealType: null,
+        dietType: null,
+        cookingStyle: null,
+        cookingTime: null,
+        steps: [],
+      },
+      step: {
+        content: '',
+        id: '',
+        image: null,
+        imageHTML: '',
+      },
+      ingredientName: '',
+      quantity: '',
+      uniqueCounter: 0,
+    }
+  },
+
+  components: {
+    Layout,
+    draggable,
+  },
+  methods: {
+    deleteDropFile() {
+      this.dropFile = null
     },
-    data() {
-        return {
-            hasError: false,
-            dropFile: null,
-            isIngOpen: false,
-            isStpOpen: false,
-            coverImageHTML: '',
-            recipe: {
-                title: null,
-                description: null,
-                ingredients: [],
-                cuisine: null,
-                mealType: null,
-                dietType: null,
-                cookingStyle: null,
-                cookingTime: null,
-                steps: [],
-            },
-            step: {
-                content: '',
-                id: '',
-                image: null,
-                imageHTML: '',
-            },
-            ingredientName: '',
-            quantity: '',
-            uniqueCounter: 0,
+    createRecipe() {
+      if (this.isAuthenticated) {
+        console.log('recipe created')
+      }
+    },
+    addIngredient() {
+      console.log(this.ingredientName)
+      if (
+        this.recipe.ingredients.filter(v => v.name === this.ingredientName)
+          .length > 0
+      ) {
+        console.log(2222)
+      } else {
+        this.recipe.ingredients.push({
+          name: this.ingredientName,
+          quantity: this.quantity,
+          id: this.uniqueCounter++,
+        })
+        this.isIngOpen = true
+        this.ingredientName = ''
+        this.quantity = ''
+      }
+    },
+
+    removeIngredient(index) {
+      this.recipe.ingredients.splice(index, 1)
+    },
+    async addStep() {
+      if (
+        this.recipe.ingredients.filter(v => v.step === this.step).length > 0
+      ) {
+        console.log(2222)
+      } else {
+        this.step.imageHTML = this.step.image
+          ? await this.previewImage(this.step.image)
+          : ''
+
+        this.recipe.steps.push({
+          image: this.step.image || null,
+          content: this.step.content,
+          id: this.uniqueCounter++,
+          imageHTML: this.step.imageHTML,
+        })
+
+        this.isStpOpen = true
+
+        this.quantity = ''
+      }
+    },
+
+    removeStep(index) {
+      index > -1 && this.recipe.steps.splice(index, 1)
+    },
+
+    async coverImage() {
+      const encodedImage = await this.previewImage(this.dropFile)
+      this.coverImageHTML = `<img src="${encodedImage}" title="${escape(
+        this.dropFile
+      )}"/>`
+    },
+
+    previewImage(file) {
+      // Only process image files.
+      if (!file.type.match('image.*')) {
+        return
+      }
+      const reader = new FileReader()
+
+      return new Promise((resolve, reject) => {
+        reader.onerror = () => {
+          reader.abort()
+          reject('')
         }
+        reader.onload = () => {
+          resolve(reader.result)
+        }
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(file)
+      })
     },
-
-    components: {
-        Layout,
-        draggable,
+  },
+  computed: {
+    ...authComputed,
+    dragOptions() {
+      return {
+        animation: 0,
+        group: 'description',
+        ghostClass: 'ghost',
+      }
     },
-    methods: {
-        deleteDropFile() {
-            this.dropFile = null
-        },
-        createRecipe() {
-            console.log('recipe created')
-        },
-        addIngredient() {
-            console.log(this.ingredientName)
-            if (
-                this.recipe.ingredients.filter(v => v.name === this.ingredientName)
-                .length > 0
-            ) {
-                console.log(2222)
-            } else {
-                this.recipe.ingredients.push({
-                    name: this.ingredientName,
-                    quantity: this.quantity,
-                    id: this.uniqueCounter++,
-                })
-                this.isIngOpen = true
-                this.ingredientName = ''
-                this.quantity = ''
-            }
-        },
-
-        removeIngredient(index) {
-            this.recipe.ingredients.splice(index, 1)
-        },
-        async addStep() {
-            if (
-                this.recipe.ingredients.filter(v => v.step === this.step).length > 0
-            ) {
-                console.log(2222)
-            } else {
-                this.step.imageHTML = this.step.image ? await this.previewImage(this.step.image) : ''
-
-                this.recipe.steps.push({
-                    image: this.step.image || null,
-                    content: this.step.content,
-                    id: this.uniqueCounter++,
-                    imageHTML: this.step.imageHTML,
-                })
-
-                this.isStpOpen = true
-
-                this.quantity = ''
-            }
-        },
-
-        removeStep(index) {
-            index > -1 && this.recipe.steps.splice(index, 1)
-        },
-
-        async coverImage() {
-            const encodedImage = await this.previewImage(this.dropFile)
-            this.coverImageHTML = `<img src="${encodedImage}" title="${escape(this.dropFile)}"/>`
-        },
-
-        previewImage(file) {
-            // Only process image files.
-            if (!file.type.match('image.*')) {
-                return
-            }
-            const reader = new FileReader()
-
-            return new Promise((resolve, reject) => {
-                reader.onerror = () => {
-                    reader.abort()
-                    reject('')
-                }
-                reader.onload = () => {
-                    resolve(reader.result)
-                }
-                // Read in the image file as a data URL.
-                reader.readAsDataURL(file)
-            })
-        },
-    },
-    computed: {
-        dragOptions() {
-            return {
-                animation: 0,
-                group: 'description',
-                ghostClass: 'ghost',
-            }
-        },
-    },
+  },
 }
 </script>
 
 <style scoped>
 .step-image {
-    max-width: 300px !important;
+  max-width: 300px !important;
 }
 
 .box.content ul,
 ol {
-    margin-top: 0px;
+  margin-top: 0px;
 }
 
 .ghost {
-    opacity: 0.5;
-    background: #c8ebfb;
+  opacity: 0.5;
+  background: #c8ebfb;
 }
 
 .panel-heading {
-    font-size: 1rem;
-    font-weight: 400;
+  font-size: 1rem;
+  font-weight: 400;
 }
 </style>

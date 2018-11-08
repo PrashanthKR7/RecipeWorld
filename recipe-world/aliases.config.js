@@ -58,7 +58,9 @@ fs.writeFile(
   ),
   error => {
     if (error) {
-      console.error('Error while creating jsconfig.json from aliases.config.js.')
+      console.error(
+        'Error while creating jsconfig.json from aliases.config.js.'
+      )
       throw error
     }
   }

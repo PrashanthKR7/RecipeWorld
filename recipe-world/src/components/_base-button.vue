@@ -5,15 +5,15 @@
 </template>
 
 <script>
-export default {};
+export default {}
 </script>
 
 <style lang="scss" module>
 @import '@design';
 .button {
-    @extend %typography-small;
-    &:disabled {
-        cursor: not-allowed;
-    }
+  @extend %typography-small;
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 </style>

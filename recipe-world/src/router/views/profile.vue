@@ -14,14 +14,16 @@ export default {
   page() {
     return {
       title: this.user.name,
-      meta: [{
-        name: 'description',
-        content: `The user profile for ${this.user.name}.`,
-      }, ],
+      meta: [
+        {
+          name: 'description',
+          content: `The user profile for ${this.user.name}.`,
+        },
+      ],
     }
   },
   components: {
-    Layout
+    Layout,
   },
   props: {
     user: {
@@ -31,4 +33,3 @@ export default {
   },
 }
 </script>
-

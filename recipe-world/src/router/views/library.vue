@@ -41,7 +41,8 @@ export default {
         {
           id: 1,
           name: 'Buffalo Cauliflower Bites',
-          description: "I love this recipe because it's a simple upgrade to the usual tailgating finger food. You still get the spicy flavor, crispy crunch and creamy sauce you want from a wing, but with a healthier twist.",
+          description:
+            "I love this recipe because it's a simple upgrade to the usual tailgating finger food. You still get the spicy flavor, crispy crunch and creamy sauce you want from a wing, but with a healthier twist.",
           cookingTime: 40,
           cookingDifficulty: 'easy',
           ingredients: [

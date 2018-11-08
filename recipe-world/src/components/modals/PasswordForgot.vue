@@ -20,41 +20,33 @@
 </template>
 
 <script>
-import LoginLogo from "../features/LoginLogo"
-import LoginModal from "./LoginModal"
-
+import LoginModal from 'LoginModal'
 export default {
   name: 'PasswordForgot',
-  data () {
+  data() {
     return {
       mail: '',
     }
   },
-  components: {
-    LoginLogo,
-    LoginModal
-  },
   methods: {
     backToLogin() {
-        this.$parent.close()
-        this.$modal.open({
-          parent: this,
-          component: LoginModal,
-          hasModalCArd: true,
-          props: {
-          }
-        })
-    }
-  }
+      this.$parent.close()
+      this.$modal.open({
+        parent: this,
+        component: LoginModal,
+        hasModalCArd: true,
+        props: {},
+      })
+    },
+  },
 }
 </script>
 
 <style scoped>
 .password-remind-link {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 .background-light {
-	background-color: hsl(0, 0%, 96%);
+  background-color: hsl(0, 0%, 96%);
 }
 </style>
-

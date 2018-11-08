@@ -52,58 +52,60 @@
 </template>
 
 <script>
-import {
-    authMethods
-} from '@state/helpers'
+import { authMethods } from '@state/helpers'
 import Layout from '@layouts/main'
 import appConfig from '@src/app.config'
 
 export default {
-    page: {
-        title: 'login',
-        meta: [{
-            name: 'description',
-            content: `Login in to ${appConfig.title}`,
-        }, ],
-    },
-    data() {
-        return {
-            activeTab: 0,
-            username: '',
-            email: '',
-            password: '',
-            passwordAgain: '',
-            authError: null,
-            tryingToLogIn: false
-        };
-    },
-    components: {
-        Layout
-    },
-    methods: {
-        ...authMethods,
-        tryToLogIn() {
-            this.tryingToLogIn = true
-            // Reset the authError if it existed
-            this.authError = null
-            return this.logIn({
-                username: this.username,
-                password: this.password
-            }).then(token => {
-                this.tryingToLogIn = false
-
-                // Redirect to the originally requested page, or to the home page
-                this.$router.push(this.$route.query.redirectFrom || {
-                    name: 'home'
-                })
-            }).catch(error => {
-                this.tryingToLogIn = false
-                this.authError = error
-            })
-        },
-        tryToRegister() {
-
-        }
+  page: {
+    title: 'login',
+    meta: [
+      {
+        name: 'description',
+        content: `Login in to ${appConfig.title}`,
+      },
+    ],
+  },
+  data() {
+    return {
+      activeTab: 0,
+      username: '',
+      email: '',
+      password: '',
+      passwordAgain: '',
+      authError: null,
+      tryingToLogIn: false,
     }
-};
+  },
+  components: {
+    Layout,
+  },
+  methods: {
+    ...authMethods,
+    tryToLogIn() {
+      this.tryingToLogIn = true
+      // Reset the authError if it existed
+      this.authError = null
+      return this.logIn({
+        username: this.username,
+        password: this.password,
+      })
+        .then(token => {
+          this.tryingToLogIn = false
+
+          // Redirect to the originally requested page, or to the home page
+          this.$router.push(
+            this.$route.query.redirectFrom || {
+              name: 'home',
+            }
+          )
+        })
+        .catch(error => {
+          this.tryingToLogIn = false
+          this.authError = error
+        })
+    },
+    tryToRegister() {},
+  },
+}
 </script>

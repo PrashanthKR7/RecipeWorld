@@ -1,4 +1,4 @@
 module.exports = {
-    title: 'Recipe World',
-    description: '',
-  }
+  title: 'Recipe World',
+  description: '',
+}

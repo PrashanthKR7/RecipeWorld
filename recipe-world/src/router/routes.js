@@ -11,7 +11,7 @@ export default [
     component: () => lazyLoadView(import('@views/login')),
     meta: {
       beforeResolve(routeTo, routeFrom, next) {
-        if (store.getters['auth/loggedIn']) {
+        if (store.getters['auth/isAuthenticated']) {
           // redirect to home page instead
           next({ name: 'home' })
         } else {
@@ -104,7 +104,7 @@ export default [
     path: '/create',
     name: 'create',
     meta: {
-     // authRequired: true,
+      // authRequired: true,
     },
     // props: () => ({ user: store.state.auth.currentUser }),
     component: () => lazyLoadView(import('@views/create')),

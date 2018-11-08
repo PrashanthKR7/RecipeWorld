@@ -6,12 +6,12 @@
 
 <script>
 export default {
-    name: 'Logo',
-    data() {
-        return {
-            logo: './assets/logo.png'
-        }
+  name: 'Logo',
+  data() {
+    return {
+      logo: './assets/logo.png',
     }
+  },
 }
 </script>
 

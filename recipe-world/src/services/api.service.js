@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import { jwtService } from '@src/services/jwt.service'
+import jwtService from '@src/services/jwt.service'
 
 export class APIService {
   constructor() {

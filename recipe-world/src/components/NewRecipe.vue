@@ -40,39 +40,36 @@
 </template>
 
 <script>
-import Navbar from "./common/Navbar"
-import Message from "./common/Message"
+import Navbar from './common/Navbar'
+import Message from './common/Message'
 
 export default {
-    name: 'NewRecipe',
-    data() {
-        return {
-            name: null,
-            author: null,
-            year: null,
-            description: null,
-            message: {
-                header: "Add Your New Recipe",
-                msg: "You can add your recipes with Buefy"
-            }
-        }
-    },
-    components: {
-        Navbar,
-        Message
-    },
-    mounted() {
-    },
-    methods: {
-        addRecipe() {
-
-        }
+  name: 'NewRecipe',
+  data() {
+    return {
+      name: null,
+      author: null,
+      year: null,
+      description: null,
+      message: {
+        header: 'Add Your New Recipe',
+        msg: 'You can add your recipes with Buefy',
+      },
     }
+  },
+  components: {
+    Navbar,
+    Message,
+  },
+  mounted() {},
+  methods: {
+    addRecipe() {},
+  },
 }
 </script>
 
 <style scoped>
 .top-15 {
-    margin-top: 15px !important;
+  margin-top: 15px !important;
 }
 </style>

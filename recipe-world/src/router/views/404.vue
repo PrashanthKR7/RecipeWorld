@@ -11,22 +11,22 @@
 </template>
 
 <script>
-import Layout from '@layouts/main';
+import Layout from '@layouts/main'
 export default {
   page: {
     title: '404',
-    meta: [{ name: 'description', content: '404' }]
+    meta: [{ name: 'description', content: '404' }],
   },
   components: {
-    Layout
+    Layout,
   },
   props: {
     resource: {
       type: String,
-      default: ''
-    }
-  }
-};
+      default: '',
+    },
+  },
+}
 </script>
 
 <style lang="scss" module>
