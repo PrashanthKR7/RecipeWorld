@@ -21,15 +21,16 @@ module.exports = {
   // Configure Webpack's dev server.
   // https://github.com/vuejs/vue-cli/blob/dev/docs/cli-service.md
   devServer: {
-    ...(process.env.API_BASE_URL
+    port: 7000,
+    ...(process.env.BASE_URL
       ? // Proxy API endpoints to the production base URL.
-        { proxy: { '/api': { target: process.env.API_BASE_URL } } }
+        { proxy: { '/api': { target: process.env.BASE_URL } } }
       : // Proxy API endpoints a local mock API.
         // { before: require('./tests/mock-api') }),
         {
           proxy: {
             '/api': {
-              target: 'http://localhost:8000',
+              target: 'http://localhost:5000',
               ws: true,
               changeOrigin: true,
             },

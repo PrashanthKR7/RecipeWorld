@@ -1,4 +1,3 @@
-import axios from 'axios'
 import jwtService from '@services/jwt.service'
 import {
   INIT,
@@ -7,9 +6,9 @@ import {
   REGISTER,
   CHECK_AUTH,
   UPDATE_USER,
-} from '../actions'
+} from '@state/actions'
 
-import { SET_AUTH, SET_ERROR, PURGE_AUTH } from './../mutations'
+import { SET_AUTH, SET_ERROR, PURGE_AUTH } from '@state/mutations'
 import { APIService } from '@services/api.service'
 
 const apiService = new APIService()
@@ -23,6 +22,9 @@ export const getters = {
   currentUser(state) {
     return state.user
   },
+  isAuthenticated(state) {
+    return state.isAuthenticated
+  },
 }
 
 export const actions = {
@@ -32,13 +34,13 @@ export const actions = {
 
   // Logs in the current user.
   [LOGIN]({ commit, dispatch }, credentials = {}) {
-    if (getters.isAuthenticated) return dispatch(CHECK_AUTH)
+    if (state.isAuthenticated) return dispatch(CHECK_AUTH)
 
     return new Promise((resolve, reject) => {
       apiService
-        .post('users/login', { user: credentials })
+        .post('auth/signin', credentials)
         .then(({ data }) => {
-          commit(SET_AUTH, data.user)
+          commit(SET_AUTH, data)
           resolve(data)
         })
         .catch(({ response }) => {
@@ -58,7 +60,7 @@ export const actions = {
       apiService
         .post('users', { user: credentials })
         .then(({ data }) => {
-          commit(SET_AUTH, data.user)
+          commit(SET_AUTH, data)
           resolve(data)
         })
         .catch(({ response }) => {
@@ -68,37 +70,14 @@ export const actions = {
     })
   },
 
-  [CHECK_AUTH]({ commit, state }) {
-    if (jwtService.getToken()) {
-      apiService.setHeader()
-      apiService
-        .get('user')
-        .then(({ data }) => {
-          commit(SET_AUTH, data.user)
-        })
-        .catch(({ response }) => {
-          commit(SET_ERROR, response.data.errors)
-        })
+  [CHECK_AUTH]() {
+    if (jwtService.hasToken()) {
+      return Promise.resolve(state.user)
     } else {
-      commit(PURGE_AUTH)
+      return Promise.resolve(null)
     }
-
-    if (!state.currentUser) return Promise.resolve(null)
-
-    return axios
-      .get('/api/session')
-      .then(response => {
-        const user = response.data
-        commit('SET_CURRENT_USER', user)
-        return user
-      })
-      .catch(error => {
-        if (error.response.status === 401) {
-          commit('SET_CURRENT_USER', null)
-        }
-        return null
-      })
   },
+
   [UPDATE_USER]({ commit }, payload) {
     const { email, username, password, image, bio } = payload
     const user = {
@@ -123,9 +102,9 @@ export const mutations = {
     state.errors = error
   },
 
-  [SET_AUTH](state, user) {
+  [SET_AUTH](state, data) {
     state.isAuthenticated = true
-    state.user = user
+    state.user.token = data.accessToken
     state.errors = null
     jwtService.saveToken(state.user.token)
   },

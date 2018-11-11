@@ -5,11 +5,15 @@ const getToken = () => {
 }
 
 const saveToken = token => {
-  window.localStorage(ID_TOKEN_KEY, token)
+  window.localStorage.setItem(ID_TOKEN_KEY, token)
 }
 
 const destroyToken = () => {
   window.localStorage.removeItem(ID_TOKEN_KEY)
 }
+const hasToken = () => {
+  console.log(window.localStorage.hasOwnProperty('user_id_token'))
+  return window.localStorage.hasOwnProperty('user_id_token')
+}
 
-export default { getToken, saveToken, destroyToken }
+export default { getToken, saveToken, destroyToken, hasToken }

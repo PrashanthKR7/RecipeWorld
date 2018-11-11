@@ -1,36 +1,36 @@
 <template>
-<header class="app-header">
+  <header class="app-header">
     <nav class="navbar is-fixed-top">
-        <div class="container">
-            <div class="navbar-brand">
-                <div class="navbar-item">
-                    <a class="brand" href="/">
-                        <div class="brand-icon"> <img alt="Recipe World" role="presentation" src="../assets/images/recipes 64x64.png"> </div>
-                        <div class="brand-content">
-                            <div class="brand-title"> Recipe World </div>
-                            <div class="brand-subtitle is-4"> Recipes for one &amp; all </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="navbar-burger burger" @click="showNav = !showNav" :class="{ 'is-active' : showNav }" data-target="mainNav">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span v-if="isAuthenticated"></span>
-                </div>
-            </div>
-            <div class="navbar-menu" id="mainNav" :class="{ 'is-active' : showNav }">
-                <div class="navbar-end">
-                    <router-link to="/" exact class="navbar-item is-active">Home</router-link>
-                    <router-link to="/recipes" class="navbar-item">Library</router-link>
-                    <router-link to="/create" v-if="isAuthenticated" class="navbar-item">Create</router-link>
-                    <router-link to="/logout" v-if="isAuthenticated" class="navbar-item">Logout</router-link>
-                    <router-link to="/login" v-else class="navbar-item">Login</router-link>
-                </div>
-            </div>
+      <div class="container">
+        <div class="navbar-brand">
+          <div class="navbar-item">
+            <a class="brand" href="/">
+              <div class="brand-icon"> <img alt="Recipe World" role="presentation" src="../assets/images/recipes 64x64.png"> </div>
+              <div class="brand-content">
+                <div class="brand-title"> Recipe World </div>
+                <div class="brand-subtitle is-4"> Recipes for one &amp; all </div>
+              </div>
+            </a>
+          </div>
+          <div class="navbar-burger burger" @click="showNav = !showNav" :class="{ 'is-active' : showNav }" data-target="mainNav">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span v-if="isAuthenticated"></span>
+          </div>
         </div>
+        <div class="navbar-menu" id="mainNav" :class="{ 'is-active' : showNav }">
+          <div class="navbar-end">
+            <router-link to="/" exact class="navbar-item is-active">Home</router-link>
+            <router-link to="/recipes" class="navbar-item">Library</router-link>
+            <router-link to="/create-edit" v-if="isAuthenticated" class="navbar-item">Create</router-link>
+            <router-link to="/logout" v-if="isAuthenticated" class="navbar-item">Logout</router-link>
+            <router-link to="/login" v-else class="navbar-item">Login</router-link>
+          </div>
+        </div>
+      </div>
     </nav>
-</header>
+  </header>
 </template>
 
 <script>

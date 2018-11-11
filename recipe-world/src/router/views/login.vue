@@ -14,13 +14,19 @@
           <div class="column is-12">
             <b-tabs v-model="activeTab" position="is-centered" size="is-large">
               <b-tab-item label="Login">
-                <form @submit.prevent="tryToLogIn">
-                  <BaseInput label="E-mail or Username" v-model="email" placeholder="E-mail or Username" type="string" />
-                  <BaseInput label="Password" v-model="password" placeholder="Password" minlength="6" type="password" />
+                <form @submit.prevent="">
+                  <b-field label="E-mail or Username">
+                    <b-input v-model="username" type="string" placeholder="E-mail or Username">
+                    </b-input>
+                  </b-field>
+                  <b-field label="Password">
+                    <b-input v-model="password" type="password" placeholder="Password">
+                    </b-input>
+                  </b-field>
                   <b-field>
                     <a class="password-remind-link is-link is-pulled-right" @click="passwordReminder()">I forgot my password</a>
                   </b-field>
-                  <BaseButton class="button is-primary is-medium is-fullwidth" :disabled="tryingToLogIn" type="submit">
+                  <BaseButton class="button is-primary is-medium is-fullwidth" @click="tryToLogIn" :disabled="tryingToLogIn" type="submit">
                     <BaseIcon v-if="tryingToLogIn" name="sync" spin />
                     <span v-else>Log in</span>
                   </BaseButton>
@@ -86,7 +92,7 @@ export default {
       // Reset the authError if it existed
       this.authError = null
       return this.logIn({
-        username: this.username,
+        usernameOrEmail: this.username,
         password: this.password,
       })
         .then(() => {

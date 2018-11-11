@@ -6,7 +6,7 @@ import jwtService from '@src/services/jwt.service'
 export class APIService {
   constructor() {
     Vue.use(VueAxios, axios)
-    Vue.axios.defaults.baseURL = '/api'
+    Vue.axios.defaults.baseURL = '/api/v1'
   }
 
   setHeader() {
@@ -21,8 +21,8 @@ export class APIService {
     })
   }
 
-  get(resource, slug = '') {
-    return Vue.axios.get(`${resource}/${slug}`).catch(error => {
+  get(resource, id = '') {
+    return Vue.axios.get(`${resource}/${id}`).catch(error => {
       throw new Error(`ApiService ${error}`)
     })
   }
@@ -31,8 +31,8 @@ export class APIService {
     return Vue.axios.post(`${resource}`, params)
   }
 
-  update(resource, slug, params) {
-    return Vue.axios.update(`${resource}/${slug}`, params)
+  update(resource, id, params) {
+    return Vue.axios.update(`${resource}/${id}`, params)
   }
 
   put(resource, params) {

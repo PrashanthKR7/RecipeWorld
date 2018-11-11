@@ -1,4 +1,5 @@
 import store from '@state/store'
+import { LOGOUT, FETCH_PROFILE, FETCH_RECIPE } from '@state/actions'
 export default [
   {
     path: '/',
@@ -41,7 +42,9 @@ export default [
       authRequired: true,
       beforeResolve(routeTo, routeFrom, next) {
         store
-          .dispatch('users/fetchUser', { username: routeTo.params.username })
+          .dispatch(`user/${FETCH_PROFILE}}`, {
+            username: routeTo.params.username,
+          })
           .then(user => {
             // Add the user to the route params, so that it can
             // be provided as a prop for the view component below.
@@ -63,7 +66,7 @@ export default [
     meta: {
       authRequired: true,
       beforeResolve(routeTo, routeFrom, next) {
-        store.dispatch('auth/logout')
+        store.dispatch(`auth/${LOGOUT}`)
         const authRequiredOnPreviousRoute = routeFrom.matched.some(
           route => route.meta.authRequired
         )
@@ -80,7 +83,9 @@ export default [
     component: () => lazyLoadView(import('@views/recipe')),
     beforeResolve(routeTo, routeFrom, next) {
       store
-        .dispatch('users/fetchUser', { username: routeTo.params.username })
+        .dispatch(`recipe/${FETCH_RECIPE}`, {
+          recipeId: routeTo.params.recipeid,
+        })
         .then(user => {
           // Add the user to the route params, so that it can
           // be provided as a prop for the view component below.
@@ -101,14 +106,15 @@ export default [
     component: () => lazyLoadView(import('@views/library')),
   },
   {
-    path: '/create/:id?',
-    name: 'create',
+    path: '/create-edit/:recipeid?',
+    name: 'create-edit',
     meta: {
-      // authRequired: true,
+      authRequired: true,
     },
     // props: () => ({ user: store.state.auth.currentUser }),
     component: () => lazyLoadView(import('@views/create')),
   },
+
   {
     path: '/404',
     name: '404',

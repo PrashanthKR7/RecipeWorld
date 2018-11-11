@@ -6,6 +6,9 @@ import VueMeta from 'vue-meta'
 import NProgress from 'nprogress/nprogress'
 import store from '@state/store'
 import routes from './routes'
+import { CHECK_AUTH } from '@state/actions'
+console.log(store)
+
 Vue.use(VueRouter)
 Vue.use(VueMeta, {
   // The component option name that vue-meta looks for meta info on
@@ -46,9 +49,9 @@ router.beforeEach((routeTo, routeFrom, next) => {
   // if auth isnt required for the route, just continue
   if (!authRequired) return next()
   // if auth isnt required and the user is logged in..
-  if (store.getters['auth/loggedIn']) {
+  if (store.getters[`auth/isAuthenticated`]) {
     // validate the local user token
-    return store.dispatch('auth/validate').then(validUser => {
+    return store.dispatch(`auth/${CHECK_AUTH}`).then(validUser => {
       // Then continue if the token still represents a valid user,
       // otherwise redirect to login.
       validUser ? next() : redirectToLogin()

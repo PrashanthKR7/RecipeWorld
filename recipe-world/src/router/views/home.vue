@@ -10,7 +10,7 @@
                 <h2 class="subtitle is-3">A recipe has no soul. you as the cook must bring soul to the recipe.</h2>
                 <div class="field is-grouped">
                   <div class="control">
-                    <router-link to="/create" class="button is-primary is-medium">Create recipe</router-link>
+                    <router-link to="/create-edit" class="button is-primary is-medium">Create recipe</router-link>
                   </div>
                   <div class="control" v-if="isAuthenticated">
                     <router-link to="/recipes/my" class="button is-primary is-medium is-outlined" href="#platform">My Library</router-link>

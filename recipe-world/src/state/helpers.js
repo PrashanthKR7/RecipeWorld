@@ -13,7 +13,7 @@ import {
   FAVORITE_REMOVE,
   RECIPE_RESET_STATE,
   FETCH_RECIPES,
-} from './actions'
+} from '@state/actions'
 
 export const authComputed = {
   ...mapState('auth', {
@@ -22,8 +22,7 @@ export const authComputed = {
   ...mapGetters('auth', ['currentUser']),
 }
 
-export const authMethods = mapActions('auth', [[LOGIN], [LOGOUT]])
-
+export const authMethods = mapActions('auth', [LOGIN, LOGOUT])
 export const recipeComputed = {
   ...mapState('library', {
     recipe: state => state.recipe,

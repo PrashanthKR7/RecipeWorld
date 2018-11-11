@@ -4,12 +4,12 @@
       <figure class="image is-4by3">
         <img class="recipe-header__cover-image" src="//www.bbcgoodfood.com/sites/default/files/styles/recipe/public/recipe/recipe-image/2016/09/frying-pan-pizza.jpg?itok=ELbVlLN7" alt="Frying pan pizza with aubergine, ricotta &amp; mint" title="Frying pan pizza with aubergine, ricotta &amp; mint">
       </figure>
-      <div class="columns">
+      <div class="columns is-mobile">
         <div class="column column_button">
           <button class="button is-success is-outlined">Save to cook book</button>
         </div>
         <div class="column column_button">
-          <router-link to="/create/1" class="button is-info">Edit</router-link>
+          <router-link to="/create-edit/1" class="button is-info">Edit</router-link>
         </div>
         <div class="column column_button">
           <button class="button is-primary">Print</button>
@@ -36,7 +36,7 @@
 
           </div>
           <div class="tile is-uppercase is-size-7">
-            <div class="column columns is-3">
+            <div class="column columns is-mobile is-3">
               <div class="column is-narrow">
                 <b-icon icon="clock-outline"></b-icon>
               </div>
@@ -45,19 +45,19 @@
                 <div class="tile"><span>Cook: </span> <span>20min</span></div>
               </div>
             </div>
-            <div class="column columns is-3">
+            <div class="column columns is-mobile is-3">
               <div class="column is-narrow">
                 <b-icon icon="altimeter"></b-icon>
               </div>
               <div class="column"> Easy </div>
             </div>
-            <div class="column columns is-3">
+            <div class="column columns is-mobile is-3">
               <div class="column is-narrow">
                 <b-icon icon="altimeter"></b-icon>
               </div>
               <div class="column"> serves 2 </div>
             </div>
-            <div class="column columns is-3">
+            <div class="column columns is-mobile is-3">
               <div class="column is-narrow">
                 <b-icon class="is-veg" icon="radiobox-marked">
                 </b-icon>

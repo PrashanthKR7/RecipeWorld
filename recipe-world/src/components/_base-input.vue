@@ -1,8 +1,8 @@
 <template>
-<b-field :label="label">
+  <b-field :label="label">
     <b-input :value="value" v-on="listeners" :type="type" :placeholder="placeholder" :password-reveal="type === 'password'">
     </b-input>
-</b-field>
+  </b-field>
 </template>
 
 <script>
