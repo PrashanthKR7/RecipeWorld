@@ -17,9 +17,9 @@ import {
 
 export const authComputed = {
   ...mapState('auth', {
-    currentUser: state => state.user,
+    isAuthenticated: state => state.isAuthenticated,
   }),
-  ...mapGetters('auth', ['isAuthenticated']),
+  ...mapGetters('auth', ['currentUser']),
 }
 
 export const authMethods = mapActions('auth', [[LOGIN], [LOGOUT]])

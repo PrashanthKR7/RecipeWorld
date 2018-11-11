@@ -1,22 +1,22 @@
 <template>
-<Layout>
+  <Layout>
     <div class="container is-fullheight hero-body">
-        <Search></Search>
-        <section class="cards">
-            <div class="columns is-multiline is-mobile is-centered">
-                <RecipeCard :recipe="recipe" :key="recipe.id" v-for="recipe in filteredRecipes" />
-            </div>
-        </section>
-        <Pagination :total="totalRecipes" :per-page="perPage" @page-changed="pageChange"></Pagination>
+      <Search></Search>
+      <section class="cards">
+        <div class="columns is-multiline is-mobile is-centered">
+          <RecipeCard :recipe="recipe" :key="recipe.id" v-for="recipe in filteredRecipes" />
+        </div>
+      </section>
+      <Pagination :total="totalRecipes" :per-page="perPage" @page-changed="pageChange"></Pagination>
     </div>
-</Layout>
+  </Layout>
 </template>
 
 <script>
 import Layout from '@layouts/main'
-import Search from '@components/common/SearchBar'
-import Pagination from '@components/common/Pagination'
-import RecipeCard from '@components/common/RecipeCard'
+import Search from '@components/common/search-bar'
+import Pagination from '@components/common/pagination'
+import RecipeCard from '@components/common/recipe-card'
 export default {
   page: {
     title: 'library',

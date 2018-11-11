@@ -17,3 +17,11 @@ $size-button-padding-vertical: $size-grid-padding / 2;
 $size-button-padding-horizontal: $size-grid-padding / 1.5;
 $size-button-padding: $size-button-padding-vertical
   $size-button-padding-horizontal;
+
+$size-extension: 'is-size-';
+$size-count: 4;
+@for $i from 1 through $size-count {
+  &.#{$size-extension}#{$i + 6} {
+    font-size: #{1 - ($i * 0.2)}rem;
+  }
+}

@@ -4,9 +4,10 @@
 @import 'fonts';
 @import 'typography';
 @import 'variables';
+@import 'stars';
 
 :export {
-    box-sizing: border-box;
+  box-sizing: border-box;
   // Any values that need to be accessible from JavaScript
   // outside of a Vue component can be defined here, prefixed
   // with `global-` to avoid conflicts with classes. For

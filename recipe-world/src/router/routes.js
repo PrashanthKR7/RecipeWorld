@@ -101,7 +101,7 @@ export default [
     component: () => lazyLoadView(import('@views/library')),
   },
   {
-    path: '/create',
+    path: '/create/:id?',
     name: 'create',
     meta: {
       // authRequired: true,

@@ -1,19 +1,19 @@
 <template>
-<div class="columns is-centered">
+  <div class="columns is-centered">
     <div class="column is-half">
-        <b-field>
-            <div class="select control">
-                <select>
-                   <option :key="category.id" v-for="category in categories">{{category.name}}</option>
-                </select>
-            </div>
-            <b-input icon="magnify" v-model="searchTerm" class="is-expanded" type="search" placeholder="Search..."></b-input>
-            <p class="control">
-                <button class="button is-primary" @click="search">Search</button>
-            </p>
-        </b-field>
+      <b-field>
+        <div class="select control">
+          <select>
+            <option :key="category.id" v-for="category in categories">{{category.name}}</option>
+          </select>
+        </div>
+        <b-input icon="magnify" v-model="searchTerm" class="is-expanded" type="search" placeholder="Search..."></b-input>
+        <p class="control">
+          <button class="button is-primary" @click="search">Search</button>
+        </p>
+      </b-field>
     </div>
-</div>
+  </div>
 </template>
 
 <script>

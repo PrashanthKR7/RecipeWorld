@@ -1,12 +1,7 @@
 <template>
-<Layout>
-    <Transition appear>
-        <BaseIcon 
-        :class="$style.loadingIcon"
-        name="sync"
-        spin/>
-    </Transition>
-</Layout>
+  <Layout>
+    <b-loading :is-full-page="true" :active="true"></b-loading>
+  </Layout>
 </template>
 
 <script>

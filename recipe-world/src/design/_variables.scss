@@ -29,7 +29,8 @@ $link-focus-border: $primary;
 .router-link-active {
     background-color: $primary !important;
     color: $primary-invert !important;
-  }
+}
+
 // Import Bulma and Buefy styles
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
