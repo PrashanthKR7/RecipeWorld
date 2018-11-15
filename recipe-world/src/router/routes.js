@@ -1,5 +1,10 @@
 import store from '@state/store'
-import { LOGOUT, FETCH_PROFILE, FETCH_RECIPE } from '@state/actions'
+import {
+  LOGOUT,
+  FETCH_PROFILE,
+  FETCH_RECIPE,
+  FETCH_RECIPE_META,
+} from '@state/actions'
 export default [
   {
     path: '/',
@@ -81,23 +86,23 @@ export default [
     name: 'recipe',
     props: true,
     component: () => lazyLoadView(import('@views/recipe')),
-    beforeResolve(routeTo, routeFrom, next) {
-      store
-        .dispatch(`recipe/${FETCH_RECIPE}`, {
-          recipeId: routeTo.params.recipeid,
-        })
-        .then(user => {
-          // Add the user to the route params, so that it can
-          // be provided as a prop for the view component below.
-          routeTo.params.user = user
-          // continue to the route
-          next()
-        })
-        .catch(() => {
-          // If a user with the provided username could not be
-          // found, redirect to the 404 page.
-          next({ name: '404', params: { resource: 'Recipe' } })
-        })
+    meta: {
+      beforeResolve(routeTo, routeFrom, next) {
+        store
+          .dispatch(`recipe/${FETCH_RECIPE}`, routeTo.params.recipeid)
+          .then(user => {
+            // Add the user to the route params, so that it can
+            // be provided as a prop for the view component below.
+            routeTo.params.user = user
+            // continue to the route
+            next()
+          })
+          .catch(() => {
+            // If a user with the provided username could not be
+            // found, redirect to the 404 page.
+            next({ name: '404', params: { resource: 'Recipe' } })
+          })
+      },
     },
   },
   {
@@ -110,8 +115,28 @@ export default [
     name: 'create-edit',
     meta: {
       authRequired: true,
+      beforeResolve(routeTo, routeFrom, next) {
+        store
+          .dispatch(`recipe/${FETCH_RECIPE_META}`)
+          .then(() => {
+            if (routeTo.params.recipeid) {
+              store
+                .dispatch(`recipe/${FETCH_RECIPE}`, routeTo.params.recipeid)
+                .then(() => {
+                  next()
+                })
+            } else {
+              next()
+            }
+          })
+          .catch(() => {
+            next({ name: '404', params: { resource: 'Recipe' } })
+          })
+      },
     },
-    // props: () => ({ user: store.state.auth.currentUser }),
+    props: () => ({
+      meta: store.state.recipe.meta,
+    }),
     component: () => lazyLoadView(import('@views/create')),
   },
 
@@ -119,6 +144,14 @@ export default [
     path: '/404',
     name: '404',
     component: require('@views/404').default,
+    // Set the user from the route params, once it's set in the
+    // beforeResolve route guard.
+    props: true,
+  },
+  {
+    path: '/server-error',
+    name: 'server-error',
+    component: require('@views/error').default,
     // Set the user from the route params, once it's set in the
     // beforeResolve route guard.
     props: true,

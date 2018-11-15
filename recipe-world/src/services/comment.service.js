@@ -1,9 +1,7 @@
-import { APIService } from '@services/api.service'
+import apiService from '@services/api.service'
 
 export class CommentService {
-  constructor() {
-    this.apiService = new APIService()
-  }
+  constructor() {}
 
   get(recipeId) {
     if (typeof recipeId !== 'string') {
@@ -11,16 +9,16 @@ export class CommentService {
         'CommentService.get() recipe recipeId required to fetch comments'
       )
     }
-    return this.apiService.get('recipes', `${recipeId}/comments`)
+    return apiService.get('recipes', `${recipeId}/comments`)
   }
 
   post(recipeId, payload) {
-    return this.apiService.post(`recipess/${recipeId}/comments`, {
+    return apiService.post(`recipess/${recipeId}/comments`, {
       comment: { body: payload },
     })
   }
 
   delete(recipeId, commentId) {
-    return this.apiService.delete(`articles/${recipeId}/comments/${commentId}`)
+    return apiService.delete(`articles/${recipeId}/comments/${commentId}`)
   }
 }

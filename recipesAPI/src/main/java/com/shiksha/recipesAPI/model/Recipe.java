@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedStoredProcedureQueries;
+import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -25,6 +27,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "recipe")
 @EntityListeners(AuditingEntityListener.class)
+
+@NamedStoredProcedureQueries({ @NamedStoredProcedureQuery(name = "getRecipeMeta", procedureName = "recipe_meta") })
 public class Recipe implements Serializable {
 
 	private static final long serialVersionUID = -1661496498457237508L;

@@ -1,29 +1,31 @@
-import { APIService } from '@services/api.service'
+import apiService from '@services/api.service'
 
 export class RecipeService {
-  constructor() {
-    this.apiService = new APIService()
-  }
+  constructor() {}
 
   query(type, params) {
-    return this.apiService.query('recipes' + (type === 'feed' ? '/feed' : ''), {
+    return apiService.query('recipes' + (type === 'feed' ? '/feed' : ''), {
       params,
     })
   }
 
+  meta() {
+    return apiService.query('recipes/meta')
+  }
+
   get(slug) {
-    return this.apiService.get('recipes', slug)
+    return apiService.get('recipes', slug)
   }
 
   create(params) {
-    return this.apiService.post('recipes', { recipe: params })
+    return apiService.post('recipes', { recipe: params })
   }
 
   update(slug, params) {
-    return this.apiService.update('recipes', slug, params)
+    return apiService.update('recipes', slug, params)
   }
 
   delete(slug) {
-    return this.apiService.delete(`recipes/${slug}`)
+    return apiService.delete(`recipes/${slug}`)
   }
 }

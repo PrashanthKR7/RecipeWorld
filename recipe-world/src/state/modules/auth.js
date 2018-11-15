@@ -9,9 +9,8 @@ import {
 } from '@state/actions'
 
 import { SET_AUTH, SET_ERROR, PURGE_AUTH } from '@state/mutations'
-import { APIService } from '@services/api.service'
+import apiService from '@services/api.service'
 
-const apiService = new APIService()
 export const state = {
   user: {},
   errors: null,
@@ -39,9 +38,9 @@ export const actions = {
     return new Promise((resolve, reject) => {
       apiService
         .post('auth/signin', credentials)
-        .then(({ data }) => {
-          commit(SET_AUTH, data)
-          resolve(data)
+        .then(({ result }) => {
+          commit(SET_AUTH, result)
+          resolve(result)
         })
         .catch(({ response }) => {
           commit(SET_ERROR, response.data.errors)
@@ -58,10 +57,10 @@ export const actions = {
   [REGISTER]({ commit }, credentials) {
     return new Promise((resolve, reject) => {
       apiService
-        .post('users', { user: credentials })
-        .then(({ data }) => {
-          commit(SET_AUTH, data)
-          resolve(data)
+        .post('auth/signup', credentials)
+        .then(({ result }) => {
+          commit(SET_AUTH, result)
+          resolve(result)
         })
         .catch(({ response }) => {
           commit(SET_ERROR, response.data.errors)

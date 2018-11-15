@@ -1,3 +1,5 @@
+import Vue from 'vue'
+import { getField, updateField } from 'vuex-map-fields'
 import {
   SET_RECIPE,
   SET_COMMENTS,
@@ -5,8 +7,8 @@ import {
   TAG_ADD,
   TAG_REMOVE,
   UPDATE_RECIPE_IN_LIST,
-} from '../mutations'
-import Vue from 'vue'
+  SET_RECIPE_META,
+} from '@state/mutations'
 import {
   FETCH_RECIPE,
   FETCH_COMMENTS,
@@ -20,29 +22,19 @@ import {
   RECIPE_EDIT,
   RECIPE_PUBLISH,
   RECIPE_DELETE,
-} from '../actions'
+  FETCH_RECIPE_META,
+} from '@state/actions'
 import { RecipeService } from '@services/recipe.service'
 import { CommentService } from '@services/comment.service'
 import { FavoriteService } from '@services/favorite.service'
-
+import { recipeStructure, recipeArrayFields } from '@utils/recipe-structure'
 const recipeService = new RecipeService()
 const commentService = new CommentService()
 const favoriteService = new FavoriteService()
-
 const initialState = {
-  recipe: {
-    title: '',
-    description: '',
-    author: {},
-    cookingTime: 0,
-    cookingDifficulty: '',
-    ingredients: [],
-    cuisine: '',
-    mealType: '',
-    steps: '',
-    tags: [],
-  },
+  recipe: { ...recipeStructure, ...recipeArrayFields },
   comments: [],
+  meta: {},
 }
 export const state = { ...initialState }
 
@@ -51,14 +43,19 @@ export const actions = {
     if (prevRecipe !== undefined) {
       return commit(SET_RECIPE, prevRecipe)
     }
-    return recipeService.get(recipeId).then(({ data }) => {
-      commit(SET_RECIPE, data.recipe)
-      return data
+    return recipeService.get(recipeId).then(({ result }) => {
+      commit(SET_RECIPE, result.recipe)
+      return result
+    })
+  },
+  [FETCH_RECIPE_META]({ commit }) {
+    return recipeService.meta().then(({ result }) => {
+      commit(SET_RECIPE_META, result)
     })
   },
   [FETCH_COMMENTS]({ commit }, recipeId) {
-    return commentService.get(recipeId).then(({ data }) => {
-      commit(SET_COMMENTS, data.comments)
+    return commentService.get(recipeId).then(({ result }) => {
+      commit(SET_COMMENTS, result.comments)
     })
   },
   [COMMENT_CREATE]({ dispatch }, payload) {
@@ -74,15 +71,15 @@ export const actions = {
       })
   },
   [FAVORITE_ADD]({ commit }, recipeId) {
-    return favoriteService.add(recipeId).then(({ data }) => {
-      commit(UPDATE_RECIPE_IN_LIST, data.recipe, { root: true })
-      commit(SET_RECIPE, data.article)
+    return favoriteService.add(recipeId).then(({ result }) => {
+      commit(UPDATE_RECIPE_IN_LIST, result.recipe, { root: true })
+      commit(SET_RECIPE, result.article)
     })
   },
   [FAVORITE_REMOVE]({ commit }, recipeId) {
-    return favoriteService.remove(recipeId).then(({ data }) => {
-      commit(UPDATE_RECIPE_IN_LIST, data.recipe, { root: true })
-      commit(SET_RECIPE, data.article)
+    return favoriteService.remove(recipeId).then(({ result }) => {
+      commit(UPDATE_RECIPE_IN_LIST, result.recipe, { root: true })
+      commit(SET_RECIPE, result.article)
     })
   },
   [RECIPE_PUBLISH]({ state }) {
@@ -94,7 +91,6 @@ export const actions = {
   [RECIPE_EDIT]({ state }) {
     return this.recipeService.update(state.recipe.recipeId, state.article)
   },
-
   // Tags not implemented
   [RECIPE_EDIT_ADD_TAG](context, tag) {
     context.commit(TAG_ADD, tag)
@@ -108,8 +104,12 @@ export const actions = {
 }
 
 export const mutations = {
+  updateField,
   [SET_RECIPE](state, recipe) {
     state.recipe = recipe
+  },
+  [SET_RECIPE_META](state, meta) {
+    state.meta = JSON.parse(meta[0])
   },
   [SET_COMMENTS](state, comments) {
     state.comments = comments
@@ -126,3 +126,5 @@ export const mutations = {
     }
   },
 }
+
+export const getters = { getField }

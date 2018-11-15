@@ -12,9 +12,11 @@ export const state = {
 export const actions = {
   [FETCH_RECIPES]({ commit }, params) {
     commit(FETCH_START)
-    return recipeService.query(params.type, params.filters).then(({ data }) => {
-      commit(FETCH_END, data)
-    })
+    return recipeService
+      .query(params.type, params.filters)
+      .then(({ result }) => {
+        commit(FETCH_END, result)
+      })
   },
 }
 

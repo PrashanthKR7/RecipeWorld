@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -82,7 +83,15 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 
 		return handleExceptionInternal(ex, bodyOfResponse, headers, HttpStatus.BAD_REQUEST, request);
 	}
+	//401
+	@ExceptionHandler(value = { AuthenticationException.class })
+	protected ResponseEntity<Object> handleUnAuthorizedException(final RuntimeException ex, final WebRequest request) {
+		final Response bodyOfResponse = new Response(HttpStatus.UNAUTHORIZED.value(),
+				HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(),
+				request.getDescription(false).replace("uri=", ""), null);
 
+		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+	}
 	// 404
 	@ExceptionHandler(value = { EntityNotFoundException.class, ResourceNotFoundException.class })
 	protected ResponseEntity<Object> handleNotFound(final RuntimeException ex, final WebRequest request) {

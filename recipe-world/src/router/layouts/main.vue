@@ -19,6 +19,5 @@ export default {
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;
-  min-height: 100vh;
 }
 </style>

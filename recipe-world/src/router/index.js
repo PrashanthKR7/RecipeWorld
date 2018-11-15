@@ -7,7 +7,6 @@ import NProgress from 'nprogress/nprogress'
 import store from '@state/store'
 import routes from './routes'
 import { CHECK_AUTH } from '@state/actions'
-console.log(store)
 
 Vue.use(VueRouter)
 Vue.use(VueMeta, {
@@ -84,6 +83,7 @@ router.beforeResolve(async (routeTo, routeFrom, next) => {
           route.meta.beforeResolve(routeTo, routeFrom, (...args) => {
             if (args.length) {
               next(...args)
+              NProgress.done()
               reject(new Error('Redirected'))
             } else {
               resolve()

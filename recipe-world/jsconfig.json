@@ -87,7 +87,15 @@
         "src/state/index.css"
       ],
       "@design/*": ["src/design/index.scss/*"],
-      "@design": ["src/design/index.scss"]
+      "@design": ["src/design/index.scss"],
+      "@validators/*": ["src/validators/rules.js/*"],
+      "@validators": [
+        "src/validators/rules.js/index.js",
+        "src/validators/rules.js/index.json",
+        "src/validators/rules.js/index.vue",
+        "src/validators/rules.js/index.scss",
+        "src/validators/rules.js/index.css"
+      ]
     }
   }
 }

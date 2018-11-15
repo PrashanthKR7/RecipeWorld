@@ -2,11 +2,28 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import jwtService from '@src/services/jwt.service'
-
-export class APIService {
+import { toast } from '@utils/toast-helper'
+class APIService {
   constructor() {
+    if (!APIService.instance) {
+      APIService.instance = this
+    }
     Vue.use(VueAxios, axios)
     Vue.axios.defaults.baseURL = '/api/v1'
+    Vue.axios.interceptors.response.use(
+      function(response) {
+        // Do something with response data
+        if (response.error != null) {
+          return Promise.reject(response)
+        }
+        return response.data
+      },
+      function(error) {
+        toast.error(error.response.data.message)
+        return Promise.reject(error)
+      }
+    )
+    return APIService.instance
   }
 
   setHeader() {
@@ -45,3 +62,7 @@ export class APIService {
     })
   }
 }
+
+const apiService = new APIService()
+Object.freeze(apiService)
+export default apiService

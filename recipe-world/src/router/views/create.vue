@@ -1,203 +1,102 @@
 <template>
-<Layout>
+  <Layout>
     <div class="container is-fullheight hero-body">
-        <form @submit.prevent="createRecipe">
-            <div class="columns">
-                <div class="column is-one-quarter">
-                    <b-field expanded label="Cover Picture">
-                        <b-upload expanded v-model="dropFile" @input="coverImage()" drag-drop>
-                            <section expanded class="section">
-                                <div class="content has-text-centered" v-if="dropFile==null">
-                                    <p>
-                                        <b-icon icon="upload" size="is-large">
-                                        </b-icon>
-                                    </p>
-                                    <p>Drop your file here or click to upload</p>
-                                </div>
+      <form @submit.prevent="createRecipe">
+        <div class="columns">
+          <div class="column is-one-quarter">
+            <BaseImageInput name="coverImage" label="Cover Picture" :expanded="true" v-model="coverImage" :showPreview="true" @remove="deleteImage" @input="coverImage = $event" />
+          </div>
 
-                                <div class="content has-text-centered" v-else>
-                                    <div v-html="coverImageHTML"></div>
-                                    <p>
-                                        <b-icon icon="upload" size="is-small">
-                                        </b-icon> Re-upload image
-                                    </p>
-                                </div>
-                            </section>
+          <div class="column">
+            <BaseInput placeholder="Recipe title" name="title" label="Title" v-model="title" v-validate="'required|alpha_spaces|min:4'" :error="errors.first('title')" />
+            <BaseInput name="description" label="Description" type="textarea" v-model="description" v-validate="'required|min:50|max:300'" :error="errors.first('description')" />
+            <IngredientInput label="Ingredients" name="ingredient" :error="errors.first('ingredient')" v-model="ingredient" v-validate="'ingredient:' + ingrNames" @change="addIngredient" />
 
-
-                        </b-upload>
-                    </b-field>
-
-                    <div class="tags" v-if="dropFile">
-                        <span class="tag is-primary ">
-                        <span class="has-ellipsis">{{dropFile.name}}</span><button class="delete is-small" type="button" @click="deleteDropFile()"></button>
-                        </span>
+            <BaseCollapsible :isOpen="isIngOpen" label="Ingredients">
+              <ul class="has-margin-top-none" v-if="ingredients.length > 0">
+                <li class="is-size-6" v-for="(ingredient,index) in ingredients" :key="ingredient.id">
+                  <div class="columns">
+                    <div class="column">{{ingredient.name}}</div>
+                    <div class="column">{{ingredient.quantity}}</div>
+                    <div class="column is-narrow">
+                      <p class="control">
+                        <button @click.prevent="removeIngredient(index)" class="button is-small">
+                          <b-icon icon="minus-box"></b-icon>
+                        </button>
+                      </p>
                     </div>
+                  </div>
+                </li>
+              </ul>
+              <p v-else>Ingredients are not added yet.</p>
+            </BaseCollapsible>
 
-                </div>
-                <div class="column">
-                    <b-field label="Title" :type="errors.has('title') ? 'is-danger': ''" :message="errors.has('title') ? errors.first('title') : ''">
-                        <b-input placeholder="Recipe title" v-model="recipe.title" v-validate="'required|alpha|min:4'" name="title"></b-input>
-                    </b-field>
+            <div class="columns is-multiline">
 
-                    <b-field label="Description" :type="errors.has('description') ? 'is-danger': ''" :message="errors.has('description') ? errors.first('description') : ''">
-                        <b-input name="description" v-model="recipe.description" v-validate="'required|min:50|length:300'" type="textarea"></b-input>
-                    </b-field>
+              <b-field grouped class="column is-one-third-tablet" expanded>
+                <BaseInput :expanded="true" placeholder="in minutes" name="prepTime" label="Prep Time" v-model="preparingTime" v-validate="'numeric|max_value:600|min_value:1'" :error="errors.first('prepTime')" />
+                <BaseInput :expanded="true" placeholder="in minutes" name="cookTime" label="Cook Time" v-model="cookingTime" v-validate="'required|numeric|max_value:600|min_value:1'" :error="errors.first('cookTime')" />
+              </b-field>
 
-                    <b-field label="Ingredients" :type="errors.has('ingredientName') ? 'is-danger' : ''" :message="errors.has('ingredientName') ? errors.first('ingredientName'): ''">
-                        <b-field grouped>
-                            <b-input name="ingredientName" v-model="ingredientName" expanded placeholder="Ingredient"></b-input>
-                            <b-input name="quantity" v-model="quantity" expanded placeholder="Quantity"></b-input>
-                            <p class="control">
-                                <button @click.prevent="addIngredient" class="button"><b-icon icon="plus-box"></b-icon></button>
-                            </p>
-
-
-                        </b-field>
-                    </b-field>
-                    <b-collapse class="panel" :open.sync="isIngOpen">
-                        <div slot="trigger" class="has-padding-none panel-heading has-padding-sm">
-                            <span>Ingredients</span>
-                            <span class="is-pulled-right">
-                                <b-icon :icon="isIngOpen ? 'chevron-down' : 'chevron-right'"></b-icon>
-                            </span>
-                        </div>
-                        <div class="box content">
-                            <ul class="has-margin-top-none" v-if="recipe.ingredients.length > 0">
-                                <li class="is-size-6" v-for="(ingredient,index) in recipe.ingredients" :key="ingredient.id">
-                                    <div class="columns">
-                                        <div class="column">{{ingredient.name}}</div>
-                                        <div class="column">{{ingredient.quantity}}</div>
-                                        <div class="column is-narrow">
-                                            <p class="control">
-                                                <button @click.prevent="removeIngredient(index)" class="button is-small"><b-icon icon="minus-box"></b-icon></button>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                            <p v-else>Ingredients are not added yet.</p>
-                        </div>
-                    </b-collapse>
-
-                    <div class="columns is-multiline">
-                        <b-field class="column is-one-third-tablet" expanded label="Cooking Time (in min)" :message="errors.has('cookingTime') ? errors.first('cookingTime'): ''" :type="errors.has('cookingTime') ? 'is-danger': ''">
-                            <b-input name="cookingTime" placeholder="Cooking time in minutes" v-model.number="recipe.cookingTime" v-validate="'numeric|max_value:600|min_value:1'"></b-input>
-                        </b-field>
-                        <b-field class="column is-one-third-tablet" label="Cooking Difficulty" :type="{ 'is-danger': hasError }" :message="{ 'Please enter a description': hasError }">
-                            <b-select expanded placeholder="Select a cooking difficulty">
-                                <option value="1">Bulma</option>
-                                <option value="2">Vue.js</option>
-                                <option value="3">Buefy</option>
-                            </b-select>
-                        </b-field>
-                        <b-field class="column is-one-third-tablet" label="Cooking Style" :type="{ 'is-danger': hasError }" :message="{ 'Please enter a description': hasError }">
-                            <b-select expanded placeholder="Select a cooking style">
-                                <option value="1">Bulma</option>
-                                <option value="2">Vue.js</option>
-                                <option value="3">Buefy</option>
-                            </b-select>
-                        </b-field>
-                    </div>
-
-                    <div class="columns is-multiline">
-                        <b-field class="column is-one-third-tablet" label="Cuisine" :type="{ 'is-danger': hasError }" :message="{ 'Please enter a description': hasError }">
-                            <b-select expanded placeholder="Select a cuisine">
-                                <option value="1">Bulma</option>
-                                <option value="2">Vue.js</option>
-                                <option value="3">Buefy</option>
-                            </b-select>
-                        </b-field>
-
-                        <b-field class="column is-one-third-tablet" label="Meal Type" :type="{ 'is-danger': hasError }" :message="{ 'Please enter a description': hasError }">
-                            <b-select expanded placeholder="Select a meal type">
-                                <option value="1">Bulma</option>
-                                <option value="2">Vue.js</option>
-                                <option value="3">Buefy</option>
-                            </b-select>
-                        </b-field>
-
-                        <b-field class="column is-one-third-tablet" label="Diet Type" :type="{ 'is-danger': hasError }" :message="{ 'Please enter a description': hasError }">
-                            <b-select expanded placeholder="Select a diet type">
-                                <option value="1">Bulma</option>
-                                <option value="2">Vue.js</option>
-                                <option value="3">Buefy</option>
-                            </b-select>
-                        </b-field>
-                    </div>
-
-                    <b-field label="Stepwise Procedure" :type="{'is-danger':hasError}" :message="{'':hasError}">
-                        <b-field grouped>
-                            <b-input name="step" v-model="step.content" expanded placeholder="Step"></b-input>
-                            <b-field class="file has-margin-right-sm">
-                                <b-upload v-model="step.image">
-                                    <a class="button is-primary">
-                                        <b-icon icon="upload"></b-icon>
-                                        <span>Choose Image</span>
-                                    </a>
-                                </b-upload>
-                            </b-field>
-                            <p class="control">
-                                <button @click.prevent="addStep" class="button"><b-icon icon="plus-box"></b-icon></button>
-                            </p>
-
-
-                        </b-field>
-                    </b-field>
-                    <b-collapse class="panel" :open.sync="isStpOpen">
-                        <div slot="trigger" class="has-padding-none panel-heading has-padding-sm">
-                            <span>Steps</span>
-                            <span class="is-pulled-right">
-                                <b-icon :icon="isStpOpen ? 'chevron-down' : 'chevron-right'"></b-icon>
-                            </span>
-                        </div>
-                        <div class="box content steps">
-                            <draggable element="ol" v-model="recipe.steps" :options="dragOptions" v-if="recipe.steps.length > 0">
-                                <transition-group>
-                                    <li class="is-size-6" v-for="(step, index) in recipe.steps" :key="step.id">
-                                        <div class="columns">
-                                            <div class="column">{{step.content}}</div>
-                                            <div class="column is-narrow" v-if="step.image">
-                                                <img class="step-image" :src="step.imageHTML" :title="step.image.name" />
-                                            </div>
-                                            <div class="column is-narrow">
-                                                <p class="control">
-                                                    <button @click.prevent="removeStep(index)" class="button is-small"><b-icon icon="minus-box"></b-icon></button>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </transition-group>
-                            </draggable>
-                            <p v-else>Ingredients are not added yet.</p>
-                        </div>
-                    </b-collapse>
-
-                    <b-field label="External Link" :type="errors.has('link') ? 'is-danger': ''" :message="errors.has('link') ? errors.first('link') : ''">
-                        <b-input placeholder="Recipe title" v-model="recipe.title" v-validate="'url'" name="link"></b-input>
-                    </b-field>
-
-                    <b-field expanded>
-                        <button class="button is-primary is-medium is-fullwidth">Create</button>
-                    </b-field>
-                </div>
+              <BaseSelect v-model="difficulty" v-validate="'required|included:'+ meta.difficulty.map(v => v.id).join(',')" :expanded="true" name="difficulty" classes="column is-one-third-tablet" label="Cooking Difficulty" placeholder="Select a cooking difficulty" :options="meta.difficulty" :error="errors.first('difficulty')" />
+              <BaseSelect v-model="cookingstyle" v-validate="'required|included:'+ meta.cookingstyle.map(v => v.id).join(',')" :expanded="true" name="cookingstyle" classes="column is-one-third-tablet" label="Cooking Style" placeholder="Select a cooking style" :options="meta.cookingstyle" :error="errors.first('cookingstyle')" />
             </div>
-        </form>
+
+            <div class="columns is-multiline">
+              <BaseSelect v-model="cuisine" v-validate="'required|included:'+ meta.cuisine.map(v => v.id).join(',')" :expanded="true" name="cuisine" classes="column is-one-third-tablet" label="Cuisine" placeholder="Select a cuisine" :options="meta.cuisine" :error="errors.first('cuisine')" />
+              <BaseSelect v-model="mealtype" v-validate="'required|included:'+ meta.mealtype.map(v => v.id).join(',')" :expanded="true" name="mealtype" classes="column is-one-third-tablet" label="Meal Type" placeholder="Select a meal type" :options="meta.mealtype" :error="errors.first('mealtype')" />
+              <BaseSelect v-model="diettype" v-validate="'required|included:'+ meta.diettype.map(v => v.id).join(',')" :expanded="true" name="diettype" classes="column is-one-third-tablet" label="Diet Type" placeholder="Select a diet type" :options="meta.diettype" :error="errors.first('diettype')" />
+            </div>
+
+            <ProcedureInput v-model="step" label="Stepwise Procedure" name="step" :error="errors.first('step')" v-validate="'step'" @change="addStep" />
+            <BaseCollapsible :isOpen="isStpOpen" label="Steps">
+              <draggable element="ol" v-model="steps" :options="dragOptions" v-if="steps.length > 0">
+                <transition-group>
+                  <li class="is-size-6" v-for="(step, index) in steps" :key="step.id">
+                    <div class="columns">
+                      <div class="column">{{step.content}}</div>
+                      <div class="column is-narrow" v-if="step.image">
+                        <img class="step-image" :src="step.imageHTML" :title="step.image.name" />
+                      </div>
+                      <div class="column is-narrow">
+                        <p class="control">
+                          <button @click.prevent="removeStep(index)" class="button is-small">
+                            <b-icon icon="minus-box"></b-icon>
+                          </button>
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                </transition-group>
+              </draggable>
+              <p v-else>Steps are not added yet.</p>
+            </BaseCollapsible>
+            <BaseInput v-model="link" label="External Link" name="link" placeholder="Recipe link (YouTube, Instagram or Facebook page etc)" v-validate="'url'" :error="errors.first('link')" />
+
+            <b-field label="Add some tags" expanded>
+              <b-taginput ellipsis maxlength="15" maxtags="5" v-model="tags" placeholder="Add a tag">
+              </b-taginput>
+            </b-field>
+            <b-field expanded>
+              <button class="button is-primary is-medium is-fullwidth">Create</button>
+            </b-field>
+          </div>
+        </div>
+      </form>
     </div>
     <output id="list"></output>
-</Layout>
+  </Layout>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
-import { authComputed } from '@state/helpers'
+import { authComputed, recipeComputed } from '@state/helpers'
+import IngredientInput from '@components/recipe/ingredient-input'
+import ProcedureInput from '@components/recipe/procedure-input'
+import { groupBy } from 'lodash'
 import Layout from '@layouts/main'
-import { Validator } from 'vee-validate'
-
-Validator.extend('ingredient', {
-  getMessage: field => 'The ' + field + ' value is not truthy.',
-  validate: value => !!value,
-})
+import { mapFields } from 'vuex-map-fields'
+import { recipeStructure, recipeArrayFields } from '@utils/recipe-structure'
 
 export default {
   page: {
@@ -209,103 +108,112 @@ export default {
       },
     ],
   },
-  data() {
-    return {
-      hasError: false,
-      dropFile: null,
-      isIngOpen: false,
-      isStpOpen: false,
-      coverImageHTML: '',
-      recipe: {
-        title: null,
-        description: null,
-        ingredients: [],
-        cuisine: null,
-        mealType: null,
-        dietType: null,
-        cookingStyle: null,
-        cookingTime: null,
-        steps: [],
-      },
-      step: {
-        content: '',
-        id: '',
-        image: null,
-        imageHTML: '',
-      },
-      ingredientName: '',
-      quantity: '',
-      uniqueCounter: 0,
-    }
-  },
-
   components: {
     Layout,
     draggable,
+    IngredientInput,
+    ProcedureInput,
+  },
+  props: ['meta'],
+  data() {
+    return {
+      hasError: false,
+      isIngOpen: false,
+      isStpOpen: false,
+      step: {
+        content: '',
+        image: null,
+        imageHTML: '',
+      },
+      uniqueCounter: 0,
+      ingredient: {
+        heading: '',
+        name: '',
+        quantity: '',
+        main: false,
+      },
+    }
   },
   methods: {
-    deleteDropFile() {
-      this.dropFile = null
+    deleteImage() {
+      this.coverImage = null
     },
     createRecipe() {
       if (this.isAuthenticated) {
-        console.log('recipe created')
+        this.$validator.validateAll().then(result => {
+          if (!result) {
+            // console.log(this.recipe)
+            console.log('not created')
+            setTimeout(() => {
+              this.$validator.reset()
+            }, 2500)
+          } else {
+            console.log('created')
+          }
+        })
       }
     },
     addIngredient() {
-      console.log(this.ingredientName)
-      if (
-        this.recipe.ingredients.filter(v => v.name === this.ingredientName)
-          .length > 0
-      ) {
-        console.log(2222)
-      } else {
-        this.recipe.ingredients.push({
-          name: this.ingredientName,
-          quantity: this.quantity,
-          id: this.uniqueCounter++,
-        })
+      console.log(this.errors)
+      if (!this.errors.has('ingredient')) {
+        this.ingredients = [
+          ...this.ingredients,
+          {
+            name: this.ingredient.name,
+            quantity: this.ingredient.quantity,
+            main: this.ingredient.main,
+            heading: this.ingredient.heading,
+            id: this.uniqueCounter++,
+          },
+        ]
+
+        console.log(groupBy(this.ingredients, 'heading'))
+
+        this.ingredient.name = ''
+        this.ingredient.quantity = ''
+        this.ingredient.heading = ''
+        this.ingredient.main = false
         this.isIngOpen = true
-        this.ingredientName = ''
-        this.quantity = ''
+
+        setTimeout(() => {
+          this.errors.remove('ingredient')
+        })
       }
     },
 
     removeIngredient(index) {
-      this.recipe.ingredients.splice(index, 1)
+      const copyIngredients = [...this.ingredients]
+      copyIngredients.splice(index, 1)
+      this.ingredients = [...copyIngredients]
+      setTimeout(() => {
+        this.errors.remove('ingredient')
+      })
     },
+
     async addStep() {
-      if (
-        this.recipe.ingredients.filter(v => v.step === this.step).length > 0
-      ) {
-        console.log(2222)
-      } else {
+      if (!this.errors.has('step')) {
         this.step.imageHTML = this.step.image
           ? await this.previewImage(this.step.image)
           : ''
-
-        this.recipe.steps.push({
-          image: this.step.image || null,
-          content: this.step.content,
+        this.steps.push({
           id: this.uniqueCounter++,
+          content: this.step.content,
+          image: this.step.image || null,
           imageHTML: this.step.imageHTML,
         })
 
+        this.step.content = ''
+        this.step.image = null
+        this.step.imageHTML = ''
         this.isStpOpen = true
-
-        this.quantity = ''
+        setTimeout(() => {
+          this.errors.remove('step')
+        })
       }
     },
 
     removeStep(index) {
-      index > -1 && this.recipe.steps.splice(index, 1)
-    },
-
-    async coverImage() {
-      const encodedImage = await this.previewImage(this.dropFile)
-      this.coverImageHTML = `<img src="${encodedImage}" title="${escape(
-        this.dropFile
-      )}"/>`
+      index > -1 && this.steps.splice(index, 1)
     },
 
     previewImage(file) {
@@ -329,6 +237,7 @@ export default {
     },
   },
   computed: {
+    ...recipeComputed,
     ...authComputed,
     dragOptions() {
       return {
@@ -337,11 +246,14 @@ export default {
         ghostClass: 'ghost',
       }
     },
+    ingrNames() {
+      return this.ingredients.map(v => v.name)
+    },
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .step-image {
   max-width: 300px !important;
 }
@@ -354,10 +266,5 @@ ol {
 .ghost {
   opacity: 0.5;
   background: #c8ebfb;
-}
-
-.panel-heading {
-  font-size: 1rem;
-  font-weight: 400;
 }
 </style>

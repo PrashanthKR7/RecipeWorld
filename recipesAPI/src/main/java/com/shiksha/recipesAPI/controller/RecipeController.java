@@ -25,6 +25,7 @@ import com.shiksha.recipesAPI.model.Recipe;
 import com.shiksha.recipesAPI.model.User;
 import com.shiksha.recipesAPI.payload.RecipeRequest;
 import com.shiksha.recipesAPI.payload.Response;
+import com.shiksha.recipesAPI.service.RecipeMetaService;
 import com.shiksha.recipesAPI.service.RecipeService;
 import com.shiksha.recipesAPI.service.UserService;
 import com.shiksha.recipesAPI.validator.ExistingAuthorValidator;
@@ -38,12 +39,23 @@ public class RecipeController {
 	@Autowired
 	private RecipeService recipeService;
 	@Autowired
+	private RecipeMetaService recipeMetaService;
+	@Autowired
 	ExistingAuthorValidator validator;
 	@Autowired
 	private UserService userService;
 
 	@Autowired
 	MessageSource messageSource;
+
+	@RequestMapping(method = RequestMethod.GET, path="/meta")
+	public ResponseEntity<Response> recipeMeta(HttpServletRequest request) {
+		List<String> meta = (List<String>) recipeMetaService.getRecipeMetafieldsData();
+		Response response = new Response(HttpStatus.OK.value(), null,
+				messageSource.getMessage("recipe.meta", new String[] {}, Locale.ROOT), request.getRequestURI(), meta,
+				HttpStatus.OK.getReasonPhrase());
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Response> addRecipe(@Valid @RequestBody RecipeRequest recipeRequest, BindingResult result,

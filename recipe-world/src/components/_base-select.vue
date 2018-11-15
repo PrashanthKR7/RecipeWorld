@@ -1,21 +1,29 @@
 <template>
-<b-field :class="classes" :label="label" :type="type" :message="message">
-  <b-select :expanded="expanded" :placeholder="placeholder">
-    <option v-for="opt in options" :key="opt.id" :value="opt.id" v-validate="validators">{{opt.value}}</option>
-  </b-select>
-</b-field>
+  <b-field :class="classes" :label="label" :type="error ? 'is-danger': ''" :message="error ? error: ''">
+    <b-select v-on="listeners" :value="value" :expanded="expanded" :placeholder="placeholder">
+      <option v-for="opt in options" :key="opt.id" :value="opt.id">{{opt.name}}</option>
+    </b-select>
+  </b-field>
 </template>
 
 <script>
 export default {
+  $_veeValidate: {
+    name() {
+      return this.name
+    },
+    value() {
+      return this.value
+    },
+  },
   props: {
     type: {
       type: String,
       default: 'text',
     },
     classes: {
-      type: Array,
-      default: new Array(),
+      type: String,
+      default: '',
     },
     placeholder: {
       type: String,
@@ -25,9 +33,10 @@ export default {
       type: String,
       default: '',
     },
-
-    message: {},
-    validators: {},
+    error: {
+      type: String,
+      required: false,
+    },
     options: {
       type: Array,
       default: new Array(),
@@ -36,15 +45,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      required: true,
+    },
+    value: {
+      type: String,
+      default: null,
+    },
   },
   computed: {
     listeners() {
       return {
         ...this.$listeners,
-        input: event =>
-          function() {
-            this.$emit('input', event.target.value)
-          },
+        input: event => this.$emit('input', event),
+        change: event => {
+          console.log(event)
+          this.$emit('input', event)
+        },
       }
     },
   },
@@ -53,10 +71,4 @@ export default {
 
 <style lang="scss" module>
 @import '@design';
-.button {
-  @extend %typography-small;
-  &:disabled {
-    cursor: not-allowed;
-  }
-}
 </style>

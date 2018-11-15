@@ -12,7 +12,6 @@ const destroyToken = () => {
   window.localStorage.removeItem(ID_TOKEN_KEY)
 }
 const hasToken = () => {
-  console.log(window.localStorage.hasOwnProperty('user_id_token'))
   return window.localStorage.hasOwnProperty('user_id_token')
 }
 
