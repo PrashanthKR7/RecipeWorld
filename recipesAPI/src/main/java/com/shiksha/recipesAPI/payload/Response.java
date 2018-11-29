@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-public class Response implements Serializable, Cloneable {
+public class Response<T> implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = -3773253896160786443L;
 	private Instant timestamp;
@@ -16,13 +15,13 @@ public class Response implements Serializable, Cloneable {
 	private List<String> errors;
 	private String message;
 	private String path;
-	private Object result;
+	private T result;
 
 	public Response() {
 		super();
 	}
 
-	public Response(int status, String error, String message, String path, Object result) {
+	public Response(int status, String error, String message, String path, T result) {
 		super();
 		this.timestamp = new Date().toInstant();
 		this.status = status;
@@ -32,7 +31,7 @@ public class Response implements Serializable, Cloneable {
 		this.result = result;
 	}
 
-	public Response(int status, String error, String message, String path, Object result, String success) {
+	public Response(int status, String error, String message, String path, T result, String success) {
 		super();
 		this.timestamp = new Date().toInstant();
 		this.status = status;
@@ -43,7 +42,7 @@ public class Response implements Serializable, Cloneable {
 		this.result = result;
 	}
 
-	public Response(int status, String error, List<String> errors, String message, String path, Object result) {
+	public Response(int status, String error, List<String> errors, String message, String path, T result) {
 		super();
 		this.timestamp = new Date().toInstant();
 		this.status = status;
@@ -94,23 +93,20 @@ public class Response implements Serializable, Cloneable {
 		this.path = path;
 	}
 
-	public void setResult(Map<String, Object> result) {
-		this.result = result;
-	}
-
-	public Response clone(Response response) {
+	@SuppressWarnings("unchecked")
+	public Response<T> clone(Response<T> response) {
 		try {
-			return (Response) response.clone();
+			return (Response<T>) response.clone();
 		} catch (CloneNotSupportedException e) {
 		}
 		return null;
 	}
 
-	public Object getResult() {
+	public T getResult() {
 		return result;
 	}
 
-	public void setResult(Object result) {
+	public void setResult(T result) {
 		this.result = result;
 	}
 

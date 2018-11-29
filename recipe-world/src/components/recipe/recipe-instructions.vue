@@ -3,7 +3,7 @@
     <div class="recipe-instruction__title">Instructions</div>
     <div class="instruction">
       <ol class="instruction__list">
-        <li class="instruction__item" v-for="(content,index) in instructions" :key="index">{{content}}</li>
+        <RecipeInstruction v-for="(step,index) in instructions" :key="index" :instruction="step" />
       </ol>
     </div>
   </section>
@@ -34,22 +34,5 @@ export default {
   padding-bottom: 0.6rem;
   font-size: 1.5rem;
   font-weight: 300;
-}
-.instruction__item {
-  font-size: 16px;
-  border-bottom: 1px solid #f0f2eb;
-  counter-increment: instruction;
-  line-height: 1.6;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1.25rem;
-}
-
-.instruction__item:before {
-  content: counter(instruction) '.';
-  font-weight: 700;
-  font-size: 23px;
-  margin-right: 8px;
-  float: left;
-  line-height: 1;
 }
 </style>

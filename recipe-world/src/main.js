@@ -7,7 +7,6 @@ import Buefy from 'buefy'
 import VeeValidate, { Validator } from 'vee-validate'
 import installRules from '@validators'
 
-
 Vue.use(VeeValidate)
 installRules(Validator)
 Vue.use(Buefy)

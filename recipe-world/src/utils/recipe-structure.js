@@ -1,8 +1,8 @@
 export const recipeStructure = {
   title: '',
-  coverImage: null,
+  thumbnail: null,
   description: '',
-  author: {},
+  author: null,
   cookingTime: null,
   preparingTime: null,
   difficulty: null,
@@ -11,12 +11,9 @@ export const recipeStructure = {
   diettype: null,
   cookingstyle: null,
   link: '',
-   steps: [],
+  instructions: [],
   tags: [],
   keyIngredients: [],
   ingredients: [],
-}
-
-export const recipeArrayFields = {
- 
+  isVeg: true,
 }

@@ -46,7 +46,7 @@ export default {
       setTimeout(() => {
         this.$emit('change', this.get())
       })
-    }
+    },
   },
 }
 </script>

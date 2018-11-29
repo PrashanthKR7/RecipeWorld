@@ -12,11 +12,12 @@ import javax.persistence.StoredProcedureQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shiksha.recipeAPI.dao.RecipeDAO;
 import com.shiksha.recipesAPI.model.Recipe;
 import com.shiksha.recipesAPI.repository.RecipeRepository;
 
 @Service
-public class DefaultRecipeService implements RecipeService, RecipeMetaService {
+public class DefaultRecipeService implements RecipeDAO {
 	@Autowired
 	private RecipeRepository recipeRepository;
 	@PersistenceContext
@@ -43,12 +44,18 @@ public class DefaultRecipeService implements RecipeService, RecipeMetaService {
 		return recipeRepository.save(recipe);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<?> getRecipeMetafieldsData() {
+	public List<String> getRecipeMetafieldsData() {
 		StoredProcedureQuery getRecipeMetaProcedure = entityManager.createNamedStoredProcedureQuery("getRecipeMeta");
 		getRecipeMetaProcedure.registerStoredProcedureParameter(1, String.class, ParameterMode.IN).setParameter(1,
 				"cuisine,mealtype,diettype,cookingstyle,difficulty,");
 		return getRecipeMetaProcedure.getResultList();
 
+	}
+
+	@Override
+	public Recipe createRecipe(Recipe recipe) {
+		return recipeRepository.save(recipe);
 	}
 }

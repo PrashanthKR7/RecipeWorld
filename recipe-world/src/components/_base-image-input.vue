@@ -12,7 +12,7 @@
           </div>
 
           <div v-if="value!==null && showPreview" class="content has-text-centered">
-            <div v-html="coverImageHTML"></div>
+            <div v-html="imageHTML"></div>
             <p>
               <b-icon icon="upload" size="is-small">
               </b-icon> Re-upload image
@@ -40,28 +40,42 @@
 </template>
 
 <script>
+import { UPLOAD_FILE } from '@state/actions'
+import { uploadMethods } from '@state/helpers'
+import { toast } from '@utils/toast-helper'
+
 export default {
-  
   data() {
     return {
-      coverImageHTML: '',
+      imageHTML: '',
     }
   },
   props: {
     label: { type: String, default: '' },
     value: {},
+    imageUrl: { type: String, default: null },
     expanded: { type: Boolean, default: false },
     showPreview: { type: Boolean, default: false },
   },
   methods: {
+    ...uploadMethods,
     async onImageUpload(imageFile) {
       this.$emit('input', imageFile)
-      if (this.showPreview && imageFile) {
-        const encodedImage = await this.previewImage(imageFile)
-        this.coverImageHTML = `<img src="${encodedImage}" title="${escape(
-          imageFile.name
-        )}"/>`
-      }
+
+      this[UPLOAD_FILE](imageFile)
+        .then(response => {
+          if (this.showPreview && imageFile) {
+            // const encodedImage = await this.previewImage(imageFile)
+            this.imageHTML = `<img src="${
+              response.fileDownloadUri
+            }" title="${escape(imageFile.name)}"/>`
+          }
+          this.$emit('upload', response.fileDownloadUri)
+          toast.success('Image uploaded successfully')
+        })
+        .catch(e => {
+          console.log(e)
+        })
     },
     previewImage(imageFile) {
       // Only process image files.
@@ -83,11 +97,11 @@ export default {
       })
     },
   },
- 
+
   async mounted() {
-    if (this.showPreview && this.value) {
-      const encodedImage = await this.previewImage(this.value)
-      this.coverImageHTML = `<img src="${encodedImage}" title="${escape(
+    if (this.showPreview && this.value && this.imageUrl) {
+      // const encodedImage = await this.previewImage(this.value)
+      this.imageHTML = `<img src="${this.imageUrl}" title="${escape(
         this.value.name
       )}"/>`
     }

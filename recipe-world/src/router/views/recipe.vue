@@ -28,25 +28,44 @@ export default {
     return {
       ingredients: [
         {
-          title: 'For the dough',
-          list: [
-            '200g strong white bread flour, plus a little for dusting',
-            '½ tsp fast-action dried yeast',
-            '¼ tsp golden caster sugar',
-            'a little oil, for greasing',
+          'For the dough': [
+            {
+              quantity: '200g',
+              name: 'strong white bread flour, plus a little for dusting',
+            },
+            { quantity: '½ tsp', name: 'fast-action dried yeast' },
+            { quantity: '¼ tsp', name: 'golden caster sugar' },
+            { quantity: 'a little', name: 'oil, for greasing' },
           ],
         },
         {
-          title: 'For the toppings',
-          list: [
-            '4 tbsp olive oil, plus a little extra',
-            '1 garlic clove, thinly sliced',
-            '200g passata',
-            'pinch of golden caster sugar(optional)',
-            '1 small aubergine, sliced into discs',
-            '100g ricotta',
-            'small handful mint, roughly chopped',
-            'extra virgin olive oil, for drizzling',
+          'For the toppings': [
+            { quantity: '4 tbsp', name: ' olive oil, plus a little extra' },
+            {
+              quantity: '1',
+              name: ' garlic clove, thinly sliced',
+            },
+            {
+              quantity: '200g',
+              name: ' passata',
+            },
+            {
+              quantity: 'pinch of',
+              name: ' golden caster sugar(optional)',
+            },
+            {
+              quantity: '1 small',
+              name: ' aubergine, sliced into discs',
+            },
+            {
+              quantity: '100g',
+              name: ' ricotta',
+            },
+            {
+              quantity: 'small handful',
+              name: ' mint, roughly chopped',
+            },
+            { quantity: 'extra', name: ' virgin olive oil, for drizzling' },
           ],
         },
       ],

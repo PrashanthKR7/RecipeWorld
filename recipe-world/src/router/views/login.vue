@@ -15,8 +15,8 @@
             <b-tabs v-model="activeTab" position="is-centered" size="is-large">
               <b-tab-item label="Login">
                 <form @submit.prevent="" data-vv-scope="login">
-                  <b-field label="E-mail or Username" :type="errors.has('login.username') ? 'is-danger': ''" :message="errors.has('login.username') ? errors.first('login.username') : ''">
-                    <b-input v-model="username" name="username" v-validate="'required'" type="string" placeholder="E-mail or Username">
+                  <b-field label="Username" :type="errors.has('login.username') ? 'is-danger': ''" :message="errors.has('login.username') ? errors.first('login.username') : ''">
+                    <b-input v-model="username" name="username" v-validate="'required'" type="string" placeholder="Username">
                     </b-input>
                   </b-field>
                   <b-field label="Password" :type="errors.has('login.password') ? 'is-danger': ''" :message="errors.has('login.password') ? errors.first('login.password') : ''">

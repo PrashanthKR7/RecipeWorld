@@ -1,4 +1,4 @@
-package com.shiksha.recipesAPI.service;
+package com.shiksha.recipeAPI.dao;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import com.shiksha.recipesAPI.model.User;
 
-public interface UserService extends CRUDService<User> {
+public interface UserDAO extends CRUDDAO<User> {
 	public Optional<User> findUserByEmailId(Serializable emailId);
 	
 	public Optional<User> findByUsernameOrEmailId(String username, String emailId);

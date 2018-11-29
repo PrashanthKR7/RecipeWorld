@@ -18,7 +18,7 @@ export class RecipeService {
   }
 
   create(params) {
-    return apiService.post('recipes', { recipe: params })
+    return apiService.post('recipes', params)
   }
 
   update(slug, params) {

@@ -1,21 +1,24 @@
 <template>
   <section class="recipe-ingredients">
-    <div class="recipe-ingredients__title">Ingredients</div>
-    <div class="ingredients-list" v-if="!isIngrendientsStringArray">
+    <div class="recipe-ingredients__title" v-if="showTitle">Ingredients</div>
+    <div class="ingredients-list">
       <div class="ingredients-list__content">
-        <div v-for="(items, index) in ingredients" :key="index">
-          <h3 class="ingredients-list__group-title">{{items.title}}</h3>
+        <div v-for="(items, key, index) in ingredients" :key="index">
+          <h3 class="ingredients-list__group-title">{{key}}</h3>
           <ul class="ingredients-list__group">
-            <li class="ingredients-list__item" v-for="(item,index1) in items.list" :key="index1">{{item}}</li>
+            <li class="ingredients-list__item" v-for="(item,index1) in items" :key="index1">
+              <div class="columns">
+                <div class="column"> {{item.quantity+" "+item.name}}</div>
+                <div class="column is-narrow" v-if="allowRemove">
+                  <button @click.prevent="removeIngredient(item.id)" class="button is-small">
+                    <b-icon icon="minus-box"></b-icon>
+                  </button>
+                </div>
+              </div>
+
+            </li>
           </ul>
         </div>
-      </div>
-    </div>
-    <div class="ingredients-list" v-else>
-      <div class="ingredients-list__content">
-        <ul class="ingredients-list__group">
-          <li class="ingredients-list__item" v-for="(item,index) in ingredients" :key="index">{{item}}</li>
-        </ul>
       </div>
     </div>
   </section>
@@ -25,18 +28,24 @@
 export default {
   props: {
     ingredients: {
-      type: Array,
-      default: new Array(),
+      type: Object,
+      required: true,
+    },
+    showTitle: {
+      type: Boolean,
+      default: false,
+    },
+    allowRemove: {
+      type: Boolean,
+      default: false,
     },
   },
-  mounted() {
-    console.log(this.ingredients)
-  },
-  computed: {
-    isIngrendientsStringArray() {
-      return this.ingredients[0].constructor.toString().includes('String')
+  methods: {
+    removeIngredient(id) {
+      this.$emit('onRemovingIngredient', id)
     },
   },
+  mounted() {},
 }
 </script>
 

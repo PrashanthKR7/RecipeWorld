@@ -1,10 +1,17 @@
 <template>
   <Layout>
     <div class="container is-fullheight hero-body">
-      <form @submit.prevent="createRecipe">
+      <form @submit.prevent="validateRecipe">
         <div class="columns">
           <div class="column is-one-quarter">
-            <BaseImageInput name="coverImage" label="Cover Picture" :expanded="true" v-model="coverImage" :showPreview="true" @remove="deleteImage" @input="coverImage = $event" />
+            <BaseImageInput name="thumbnail" label="Cover Picture" :expanded="true" v-model="thumbnailImg" :showPreview="true" @remove="deleteImage" @upload="thumbnail = $event" />
+
+            <hr />
+            <div class="field recipe-switch">
+              <span class="control-label">Non-Vegetarian</span>
+              <b-switch v-model="isVeg" />
+              <span class="control-label">Vegetarian</span>
+            </div>
           </div>
 
           <div class="column">
@@ -13,21 +20,7 @@
             <IngredientInput label="Ingredients" name="ingredient" :error="errors.first('ingredient')" v-model="ingredient" v-validate="'ingredient:' + ingrNames" @change="addIngredient" />
 
             <BaseCollapsible :isOpen="isIngOpen" label="Ingredients">
-              <ul class="has-margin-top-none" v-if="ingredients.length > 0">
-                <li class="is-size-6" v-for="(ingredient,index) in ingredients" :key="ingredient.id">
-                  <div class="columns">
-                    <div class="column">{{ingredient.name}}</div>
-                    <div class="column">{{ingredient.quantity}}</div>
-                    <div class="column is-narrow">
-                      <p class="control">
-                        <button @click.prevent="removeIngredient(index)" class="button is-small">
-                          <b-icon icon="minus-box"></b-icon>
-                        </button>
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+              <IngredientsList class="column" :ingredients="displayIngredients" :allowRemove="true" v-if="displayIngredients" @onRemovingIngredient="removeIngredient" />
               <p v-else>Ingredients are not added yet.</p>
             </BaseCollapsible>
 
@@ -49,27 +42,13 @@
             </div>
 
             <ProcedureInput v-model="step" label="Stepwise Procedure" name="step" :error="errors.first('step')" v-validate="'step'" @change="addStep" />
-            <BaseCollapsible :isOpen="isStpOpen" label="Steps">
-              <draggable element="ol" v-model="steps" :options="dragOptions" v-if="steps.length > 0">
+            <BaseCollapsible :isOpen="isStpOpen" label="Instructions">
+              <draggable element="ol" v-model="instructions" :options="dragOptions" v-if="instructions.length > 0">
                 <transition-group>
-                  <li class="is-size-6" v-for="(step, index) in steps" :key="step.id">
-                    <div class="columns">
-                      <div class="column">{{step.content}}</div>
-                      <div class="column is-narrow" v-if="step.image">
-                        <img class="step-image" :src="step.imageHTML" :title="step.image.name" />
-                      </div>
-                      <div class="column is-narrow">
-                        <p class="control">
-                          <button @click.prevent="removeStep(index)" class="button is-small">
-                            <b-icon icon="minus-box"></b-icon>
-                          </button>
-                        </p>
-                      </div>
-                    </div>
-                  </li>
+                  <RecipeInstruction v-for="step in instructions" :instruction="step" :key="step.idx" @removeStep="removeStep" :instructions="instructions" :allowRemove="true" />
                 </transition-group>
               </draggable>
-              <p v-else>Steps are not added yet.</p>
+              <p v-else>Instructions are not added yet.</p>
             </BaseCollapsible>
             <BaseInput v-model="link" label="External Link" name="link" placeholder="Recipe link (YouTube, Instagram or Facebook page etc)" v-validate="'url'" :error="errors.first('link')" />
 
@@ -89,14 +68,22 @@
 </template>
 
 <script>
+import Layout from '@layouts/main'
 import draggable from 'vuedraggable'
-import { authComputed, recipeComputed } from '@state/helpers'
+import { RECIPE_PUBLISH, UPLOAD_FILE } from '@state/actions'
+import {
+  authComputed,
+  recipeComputed,
+  recipeMethods,
+  uploadMethods,
+} from '@state/helpers'
 import IngredientInput from '@components/recipe/ingredient-input'
 import ProcedureInput from '@components/recipe/procedure-input'
+import IngredientsList from '@components/recipe/ingredients-list'
+import RecipeInstruction from '@components/recipe/recipe-instruction'
+import { toast } from '@utils/toast-helper'
+
 import { groupBy } from 'lodash'
-import Layout from '@layouts/main'
-import { mapFields } from 'vuex-map-fields'
-import { recipeStructure, recipeArrayFields } from '@utils/recipe-structure'
 
 export default {
   page: {
@@ -113,17 +100,20 @@ export default {
     draggable,
     IngredientInput,
     ProcedureInput,
+    IngredientsList,
+    RecipeInstruction,
   },
   props: ['meta'],
   data() {
     return {
+      thumbnailImg: null,
       hasError: false,
       isIngOpen: false,
       isStpOpen: false,
       step: {
         content: '',
-        image: null,
-        imageHTML: '',
+        imageFile: null,
+        image: '',
       },
       uniqueCounter: 0,
       ingredient: {
@@ -132,30 +122,67 @@ export default {
         quantity: '',
         main: false,
       },
+      displayIngredients: null,
     }
   },
   methods: {
+    ...uploadMethods,
+    ...recipeMethods,
     deleteImage() {
-      this.coverImage = null
+      this.thumbnail = null
+      this.thumbnailImg = null
     },
-    createRecipe() {
+    createRecipe(recipe) {
+      this.keyIngredients = [...this.ingredients]
+        .filter(v => v.main)
+        .map(v1 => ({ name: v1.name }))
+      this.author = this.currentUser.username
+      this[RECIPE_PUBLISH](recipe)
+        .then(() => {
+          toast.success("You've successfully created recipe!")
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    },
+    validateRecipe() {
       if (this.isAuthenticated) {
-        this.$validator.validateAll().then(result => {
-          if (!result) {
-            // console.log(this.recipe)
-            console.log('not created')
+        this.$validator.validateAll().then(valid => {
+          if (!valid) {
+            let time = 10
+            let error = ''
+            if (this.ingredients.length === 0) {
+              error = 'No ingredients are given for the recipe!'
+              time = 2500
+            } else if (this.instructions.length === 0) {
+              error = 'No instructions are given for the recipe!'
+              time = 2500
+            } else if (
+              this.$validator.errors.items.filter(
+                v => v.field === 'ingredient' || v.field === 'step'
+              ).length !== this.$validator.errors.items.length
+            ) {
+              error = 'Fill all the fields to create the recipe!'
+              time = 2500
+            } else {
+              this.createRecipe(this.recipe)
+            }
             setTimeout(() => {
               this.$validator.reset()
-            }, 2500)
+            }, time)
+            error !== '' && toast.error(error)
           } else {
-            console.log('created')
+            this.createRecipe(this.recipe)
           }
         })
       }
     },
     addIngredient() {
-      console.log(this.errors)
       if (!this.errors.has('ingredient')) {
+        this.ingredient.heading =
+          this.ingredient.heading.trim().length > 0
+            ? this.ingredient.heading
+            : 'Main Ingredients'
         this.ingredients = [
           ...this.ingredients,
           {
@@ -167,8 +194,7 @@ export default {
           },
         ]
 
-        console.log(groupBy(this.ingredients, 'heading'))
-
+        this.displayIngredients = groupBy(this.ingredients, 'heading')
         this.ingredient.name = ''
         this.ingredient.quantity = ''
         this.ingredient.heading = ''
@@ -181,10 +207,19 @@ export default {
       }
     },
 
-    removeIngredient(index) {
-      const copyIngredients = [...this.ingredients]
-      copyIngredients.splice(index, 1)
-      this.ingredients = [...copyIngredients]
+    removeById(id, data) {
+      const copy = [...data]
+      const index = copy.findIndex(v => v.id === id)
+      copy.splice(index, 1)
+      data = [...copy]
+      return data
+    },
+
+    removeIngredient(id) {
+      this.ingredients = this.removeById(id, this.ingredients)
+      this.displayIngredients = this.ingredients.length
+        ? groupBy(this.ingredients, 'heading')
+        : null
       setTimeout(() => {
         this.errors.remove('ingredient')
       })
@@ -192,19 +227,25 @@ export default {
 
     async addStep() {
       if (!this.errors.has('step')) {
-        this.step.imageHTML = this.step.image
-          ? await this.previewImage(this.step.image)
+        const image = this.step.imageFile
+          ? await this[UPLOAD_FILE](this.step.imageFile).then(
+              response => response.fileDownloadUri
+            )
           : ''
-        this.steps.push({
-          id: this.uniqueCounter++,
-          content: this.step.content,
-          image: this.step.image || null,
-          imageHTML: this.step.imageHTML,
-        })
+
+        this.instructions = [
+          ...this.instructions,
+          {
+            idx: this.uniqueCounter++,
+            content: this.step.content,
+            imageFile: this.step.imageFile || null,
+            image: image,
+          },
+        ]
 
         this.step.content = ''
-        this.step.image = null
-        this.step.imageHTML = ''
+        this.step.imageFile = null
+        this.step.image = ''
         this.isStpOpen = true
         setTimeout(() => {
           this.errors.remove('step')
@@ -212,8 +253,11 @@ export default {
       }
     },
 
-    removeStep(index) {
-      index > -1 && this.steps.splice(index, 1)
+    removeStep(id) {
+      this.instructions = this.removeById(id, this.instructions)
+      setTimeout(() => {
+        this.errors.remove('step')
+      })
     },
 
     previewImage(file) {
@@ -254,13 +298,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.step-image {
-  max-width: 300px !important;
+@import '@design';
+.recipe-switch {
+  align-items: center;
+  display: flex;
+  .control-label:first-child {
+    padding-right: 0.5rem;
+  }
 }
-
 .box.content ul,
 ol {
-  margin-top: 0px;
+  list-style-type: none !important;
+  margin-top: 0rem;
 }
 
 .ghost {

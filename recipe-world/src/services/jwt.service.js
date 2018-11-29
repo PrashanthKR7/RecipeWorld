@@ -1,18 +1,26 @@
 const ID_TOKEN_KEY = 'user_id_token'
+const USERNAME = 'username'
 
-const getToken = () => {
-  return window.localStorage.getItem(ID_TOKEN_KEY)
+const getToken = (token_key = ID_TOKEN_KEY) => {
+  return window.localStorage.getItem(token_key)
 }
 
-const saveToken = token => {
-  window.localStorage.setItem(ID_TOKEN_KEY, token)
+const saveToken = (token, token_key = ID_TOKEN_KEY) => {
+  window.localStorage.setItem(token_key, token)
 }
 
-const destroyToken = () => {
-  window.localStorage.removeItem(ID_TOKEN_KEY)
+const destroyToken = (token_key = ID_TOKEN_KEY) => {
+  window.localStorage.removeItem(token_key)
 }
-const hasToken = () => {
-  return window.localStorage.hasOwnProperty('user_id_token')
+const hasToken = (token_key = ID_TOKEN_KEY) => {
+  return window.localStorage.hasOwnProperty(token_key)
 }
 
-export default { getToken, saveToken, destroyToken, hasToken }
+export default {
+  getToken,
+  saveToken,
+  destroyToken,
+  hasToken,
+  USERNAME,
+  ID_TOKEN_KEY,
+}

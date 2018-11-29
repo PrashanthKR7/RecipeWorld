@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import com.shiksha.recipeAPI.dao.UserDAO;
 import com.shiksha.recipesAPI.model.User;
-import com.shiksha.recipesAPI.service.UserService;
 
 @Component
 public class ExistingAuthorValidator implements Validator {
 
 	@Autowired
-	private UserService userService;
+	private UserDAO userService;
 	
 	@Autowired
 	private MessageSource messageSource;

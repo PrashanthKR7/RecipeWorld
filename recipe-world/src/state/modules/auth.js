@@ -39,6 +39,7 @@ export const actions = {
       apiService
         .post('auth/signin', credentials)
         .then(({ result }) => {
+          result.username = credentials.usernameOrEmail
           commit(SET_AUTH, result)
           resolve(result)
         })
@@ -59,6 +60,7 @@ export const actions = {
       apiService
         .post('auth/signup', credentials)
         .then(({ result }) => {
+          result.username = credentials.username
           commit(SET_AUTH, result)
           resolve(result)
         })
@@ -71,6 +73,7 @@ export const actions = {
 
   [CHECK_AUTH]() {
     if (jwtService.hasToken()) {
+      state.user.username = jwtService.getToken(jwtService.USERNAME)
       return Promise.resolve(state.user)
     } else {
       return Promise.resolve(null)
@@ -100,11 +103,12 @@ export const mutations = {
   [SET_ERROR](state, error) {
     state.errors = error
   },
-
   [SET_AUTH](state, data) {
     state.isAuthenticated = true
     state.user.token = data.accessToken
+    state.user.username = data.username
     state.errors = null
+    jwtService.saveToken(state.user.username, jwtService.USERNAME)
     jwtService.saveToken(state.user.token)
   },
 
@@ -112,6 +116,7 @@ export const mutations = {
     state.isAuthenticated = false
     state.user = {}
     state.errors = {}
+    jwtService.destroyToken(jwtService.USERNAME)
     jwtService.destroyToken()
   },
 }

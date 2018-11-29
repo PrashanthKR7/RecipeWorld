@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shiksha.recipeAPI.dao.RoleDAO;
+import com.shiksha.recipeAPI.dao.UserDAO;
 import com.shiksha.recipesAPI.exception.AppException;
 import com.shiksha.recipesAPI.exception.BadRequestException;
 import com.shiksha.recipesAPI.model.Role;
@@ -32,8 +34,6 @@ import com.shiksha.recipesAPI.payload.LoginRequest;
 import com.shiksha.recipesAPI.payload.Response;
 import com.shiksha.recipesAPI.payload.SignUpRequest;
 import com.shiksha.recipesAPI.security.JwtTokenProvider;
-import com.shiksha.recipesAPI.service.RoleService;
-import com.shiksha.recipesAPI.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,10 +46,10 @@ public class AuthController {
 	AuthenticationManager authenticationManager;
 
 	@Autowired
-	UserService userService;
+	UserDAO userService;
 
 	@Autowired
-	RoleService roleService;
+	RoleDAO roleService;
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -58,7 +58,7 @@ public class AuthController {
 	JwtTokenProvider tokenProvider;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest,
+	public ResponseEntity<Response<JwtAuthenticationResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest,
 			HttpServletRequest request) {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword()));
@@ -67,15 +67,15 @@ public class AuthController {
 
 		String jwt = tokenProvider.generateToken(authentication);
 
-		Response response = new Response(HttpStatus.OK.value(), null,
+		Response<JwtAuthenticationResponse> response = new Response<>(HttpStatus.OK.value(), null,
 				messageSource.getMessage("user.login", new String[] {}, Locale.ROOT), request.getRequestURI(),
 				new JwtAuthenticationResponse(jwt), HttpStatus.OK.getReasonPhrase());
-		return new ResponseEntity<Response>(response, HttpStatus.OK);
+		return new ResponseEntity<Response<JwtAuthenticationResponse>>(response, HttpStatus.OK);
 
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/signup")
-	public ResponseEntity<Response> registerUser(@Valid @RequestBody SignUpRequest signUpRequest,
+	public ResponseEntity<Response<JwtAuthenticationResponse>> registerUser(@Valid @RequestBody SignUpRequest signUpRequest,
 			HttpServletRequest request) {
 		if (userService.existsByUsername(signUpRequest.getUsername())) {
 			throw new BadRequestException(messageSource.getMessage("user.name_already_used",
@@ -107,10 +107,10 @@ public class AuthController {
 
 		String jwt = tokenProvider.generateToken(authentication);
 
-		Response response = new Response(HttpStatus.OK.value(), null,
+		Response<JwtAuthenticationResponse> response = new Response<>(HttpStatus.OK.value(), null,
 				messageSource.getMessage("user.registration", new String[] { result.getUsername() }, Locale.ROOT),
 				request.getRequestURI(), new JwtAuthenticationResponse(jwt), HttpStatus.OK.getReasonPhrase());
-		return new ResponseEntity<Response>(response, HttpStatus.OK);
+		return new ResponseEntity<Response<JwtAuthenticationResponse>>(response, HttpStatus.OK);
 
 		// URI location =
 		// ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/{username}")

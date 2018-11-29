@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shiksha.recipeAPI.dao.UserDAO;
 import com.shiksha.recipesAPI.exception.ResourceNotFoundException;
 import com.shiksha.recipesAPI.model.User;
 import com.shiksha.recipesAPI.security.UserPrincipal;
@@ -15,7 +16,7 @@ import com.shiksha.recipesAPI.security.UserPrincipal;
 public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	UserService userService;
+	UserDAO userService;
 
 	@Override
 	@Transactional

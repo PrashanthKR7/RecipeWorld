@@ -47,7 +47,7 @@ export default {
       type: String,
       required: false,
     },
-    expanded:{
+    expanded: {
       type: Boolean,
       default: false,
     },

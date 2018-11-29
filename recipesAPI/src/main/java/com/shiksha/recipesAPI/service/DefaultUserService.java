@@ -7,10 +7,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shiksha.recipeAPI.dao.UserDAO;
 import com.shiksha.recipesAPI.model.User;
 import com.shiksha.recipesAPI.repository.UserRepository;
+
 @Service
-public class DefaultUserService implements UserService {
+public class DefaultUserService implements UserDAO {
+
 	@Autowired
 	private UserRepository userRepository;
 

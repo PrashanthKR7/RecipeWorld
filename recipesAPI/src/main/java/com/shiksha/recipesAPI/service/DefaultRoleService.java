@@ -5,12 +5,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shiksha.recipeAPI.dao.RoleDAO;
 import com.shiksha.recipesAPI.model.Role;
 import com.shiksha.recipesAPI.model.RoleName;
 import com.shiksha.recipesAPI.repository.RoleRepository;
 
 @Service
-public class DefaultRoleService implements RoleService {
+public class DefaultRoleService implements RoleDAO {
 
 	@Autowired
 	RoleRepository roleRepository;

@@ -23,16 +23,20 @@ import {
   RECIPE_PUBLISH,
   RECIPE_DELETE,
   FETCH_RECIPE_META,
+  UPLOAD_FILES,
 } from '@state/actions'
 import { RecipeService } from '@services/recipe.service'
+import { ImageService } from '@services/image.service'
 import { CommentService } from '@services/comment.service'
 import { FavoriteService } from '@services/favorite.service'
-import { recipeStructure, recipeArrayFields } from '@utils/recipe-structure'
+import { recipeStructure } from '@utils/recipe-structure'
+import { UPLOAD_FILE } from './../actions'
 const recipeService = new RecipeService()
+const imageService = new ImageService()
 const commentService = new CommentService()
 const favoriteService = new FavoriteService()
 const initialState = {
-  recipe: { ...recipeStructure, ...recipeArrayFields },
+  recipe: { ...recipeStructure },
   comments: [],
   meta: {},
 }
@@ -83,15 +87,20 @@ export const actions = {
     })
   },
   [RECIPE_PUBLISH]({ state }) {
-    return this.recipeService.create(state.recipe)
+    return recipeService.create(state.recipe)
   },
   [RECIPE_DELETE](context, recipeId) {
-    return this.recipeService.destroy(recipeId)
+    return recipeService.destroy(recipeId)
   },
   [RECIPE_EDIT]({ state }) {
-    return this.recipeService.update(state.recipe.recipeId, state.article)
+    return recipeService.update(state.recipe.recipeId, state.article)
   },
-  // Tags not implemented
+  [UPLOAD_FILE](context, file) {
+    return imageService.upload(file)
+  },
+  [UPLOAD_FILES](context, files) {
+    return imageService.uploadMultiple(files)
+  }, // Tags not implemented
   [RECIPE_EDIT_ADD_TAG](context, tag) {
     context.commit(TAG_ADD, tag)
   },

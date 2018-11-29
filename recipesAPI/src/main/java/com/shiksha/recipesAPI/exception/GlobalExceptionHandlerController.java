@@ -36,7 +36,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 	// 400
 	@ExceptionHandler({ ConstraintViolationException.class })
 	public ResponseEntity<Object> handleBadRequest(final ConstraintViolationException ex, final WebRequest request) {
-		final Response bodyOfResponse = new Response(HttpStatus.BAD_REQUEST.value(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.BAD_REQUEST.value(),
 				HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 
@@ -46,8 +46,8 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 	@ExceptionHandler({ DataIntegrityViolationException.class })
 	public ResponseEntity<Object> handleBadRequest(final DataIntegrityViolationException ex, final WebRequest request) {
 
-		final Response bodyOfResponse = new Response(HttpStatus.BAD_REQUEST.value(),
-				HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getRootCause().getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
@@ -55,7 +55,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 
 	@ExceptionHandler({ BadRequestException.class })
 	public ResponseEntity<Object> handleBadRequest(final RuntimeException ex, final WebRequest request) {
-		final Response bodyOfResponse = new Response(HttpStatus.BAD_REQUEST.value(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.BAD_REQUEST.value(),
 				HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 
@@ -65,7 +65,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
 			final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-		final Response bodyOfResponse = new Response(HttpStatus.BAD_REQUEST.value(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.BAD_REQUEST.value(),
 				HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 
@@ -77,7 +77,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 			final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 		List<String> list = ex.getBindingResult().getFieldErrors().stream()
 				.map(e -> e.getField() + ": " + e.getDefaultMessage()).collect(Collectors.toList());
-		final Response bodyOfResponse = new Response(HttpStatus.BAD_REQUEST.value(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.BAD_REQUEST.value(),
 				HttpStatus.BAD_REQUEST.getReasonPhrase(), list, ex.getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 
@@ -86,7 +86,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 	//401
 	@ExceptionHandler(value = { AuthenticationException.class })
 	protected ResponseEntity<Object> handleUnAuthorizedException(final RuntimeException ex, final WebRequest request) {
-		final Response bodyOfResponse = new Response(HttpStatus.UNAUTHORIZED.value(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.UNAUTHORIZED.value(),
 				HttpStatus.UNAUTHORIZED.getReasonPhrase(), ex.getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 
@@ -95,7 +95,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 	// 404
 	@ExceptionHandler(value = { EntityNotFoundException.class, ResourceNotFoundException.class })
 	protected ResponseEntity<Object> handleNotFound(final RuntimeException ex, final WebRequest request) {
-		final Response bodyOfResponse = new Response(HttpStatus.NOT_FOUND.value(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.NOT_FOUND.value(),
 				HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 
@@ -105,7 +105,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 	// 409
 	@ExceptionHandler({ InvalidDataAccessApiUsageException.class, DataAccessException.class })
 	protected ResponseEntity<Object> handleConflict(final RuntimeException ex, final WebRequest request) {
-		final Response bodyOfResponse = new Response(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(),
 				ex.getMessage(), request.getDescription(false).replace("uri=", ""), null);
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
 	}
@@ -116,7 +116,7 @@ public class GlobalExceptionHandlerController extends ResponseEntityExceptionHan
 	@ExceptionHandler({ NullPointerException.class, IllegalArgumentException.class, IllegalStateException.class })
 	public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
 		LOGGER.error("500 Status Code", ex);
-		final Response bodyOfResponse = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+		final Response<Object> bodyOfResponse = new Response<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), ex.getMessage(),
 				request.getDescription(false).replace("uri=", ""), null);
 

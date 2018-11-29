@@ -26,6 +26,7 @@
     "vee-validate": "^2.1.2",
     "vue": "^2.5.17",
     "vue-axios": "^2.1.4",
+    "vue-error-page": "^1.1.7",
     "vue-meta": "^1.5.5",
     "vue-router": "^3.0.1",
     "vue-star-rating": "^1.6.1",

@@ -17,6 +17,7 @@ import {
   RECIPE_RESET_STATE,
   FETCH_RECIPES,
   REGISTER,
+  UPLOAD_FILE,
 } from '@state/actions'
 
 export const authComputed = {
@@ -47,6 +48,7 @@ export const recipeMethods = mapActions('recipe', [
   FAVORITE_REMOVE,
   RECIPE_RESET_STATE,
 ])
+export const uploadMethods = mapActions('recipe', [UPLOAD_FILE])
 
 export const libraryComputed = {
   ...mapState('library', {

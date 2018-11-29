@@ -3,7 +3,7 @@
     <b-field grouped :type="error ? 'is-danger': ''">
       <b-input v-model="value.content" expanded placeholder="Step"></b-input>
       <b-field class="file has-margin-right-sm">
-        <b-upload v-model="value.image">
+        <b-upload v-model="value.imageFile">
           <a class="button is-primary">
             <b-icon icon="upload"></b-icon>
             <span>Choose Image</span>
@@ -34,7 +34,7 @@ export default {
     get: function() {
       return {
         content: this.value.content,
-        image: this.value.image,
+        imageFile: this.value.imageFile,
       }
     },
     add: function() {
